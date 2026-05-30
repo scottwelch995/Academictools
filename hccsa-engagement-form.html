@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HCCSA — Engagement & Attention Observation</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:      #1a2e4a;
+  --navy-dark: #0f1d30;
+  --gold:      #c8a84b;
+  --gold-pale: #fdf6e3;
+  --gold-text: #7a6010;
+  --white:     #ffffff;
+  --off-white: #f8f7f4;
+  --rule:      #e0d8cc;
+  --ink:       #1c1c1a;
+  --ink-light: #3a3830;
+  --green-bg:  #eef6ec;
+  --green-bd:  #7aaa72;
+  --red-bg:    #fdf0ef;
+  --red-bd:    #cc8880;
+  --warn-bg:   #fff8ec;
+  --warn-bd:   #d4a030;
+  --radius:    9px;
+}
+
+body { font-family: Georgia,'Times New Roman',serif; background:var(--off-white); color:var(--ink); min-height:100vh; -webkit-text-size-adjust:100%; }
+
+/* ── Top Bar ── */
+#topbar { background:var(--navy-dark); padding:11px 18px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+#topbar img { height:38px; object-fit:contain; }
+#topbar .tag { color:rgba(255,255,255,0.7); font-size:13px; letter-spacing:1px; text-transform:uppercase; }
+
+#page { max-width:1100px; margin:0 auto; padding:20px 20px 80px; }
+@media(max-width:1024px){ #page { max-width:960px; padding:16px 16px 80px; } }
+@media(max-width:600px){ #page { max-width:100%; padding:12px 12px 80px; } }
+
+/* ── Cards ── */
+.card { background:var(--white); border-radius:14px; border:1px solid var(--rule); overflow:hidden; box-shadow:0 3px 24px rgba(0,0,0,0.07); margin-bottom:16px; }
+.card-header { background:var(--navy); padding:18px 20px; display:flex; align-items:center; gap:14px; }
+.card-header img { height:40px; object-fit:contain; flex-shrink:0; }
+.header-divider { border-left:1px solid rgba(255,255,255,0.18); padding-left:14px; }
+.header-eyebrow { font-size:13px; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:5px; }
+.header-title { font-size:24px; color:var(--white); font-weight:bold; line-height:1.2; }
+.header-sub { font-size:15px; color:rgba(255,255,255,0.8); margin-top:5px; line-height:1.4; }
+.card-body { padding:18px 20px; display:flex; flex-direction:column; gap:20px; }
+
+/* ── Framework Badge ── */
+.framework-badge { background:var(--navy); border-radius:var(--radius); padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+.badge-row { display:flex; gap:8px; align-items:flex-start; }
+.badge-pill { font-size:12px; color:var(--navy); background:var(--gold); border-radius:20px; padding:4px 11px; font-weight:bold; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; flex-shrink:0; margin-top:1px; }
+.badge-items { font-size:15px; color:rgba(255,255,255,0.95); line-height:1.6; }
+
+/* ── Focus Box ── */
+.focus-box { background:var(--gold-pale); border-left:3px solid var(--gold); border-radius:0 var(--radius) var(--radius) 0; padding:13px 15px; }
+.focus-statement { font-size:16px; color:var(--ink); line-height:1.65; margin-bottom:12px; }
+.lookfor-header { font-size:13px; color:var(--gold-text); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; padding-top:10px; border-top:1px solid #e5d090; font-weight:bold; }
+.lookfor-row { display:flex; gap:8px; margin-bottom:5px; align-items:flex-start; }
+.lookfor-arrow { color:var(--gold); font-size:13px; margin-top:3px; flex-shrink:0; }
+.lookfor-text { font-size:15px; color:var(--ink); line-height:1.6; }
+
+/* ── Labels ── */
+.section-label { font-size:13px; color:var(--ink-light); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; font-weight:bold; }
+.section-note { font-size:15px; color:#444440; font-style:italic; margin-bottom:14px; line-height:1.6; }
+.subsection-label { font-size:13px; color:var(--ink-light); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; font-weight:bold; }
+
+/* ── Meta ── */
+.meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:500px){ .meta-grid { grid-template-columns:1fr; } }
+.meta-field label { display:block; font-size:13px; color:var(--ink-light); margin-bottom:4px; }
+.meta-field input { width:100%; padding:9px 11px; border:1px solid var(--rule); border-radius:7px; font-family:Georgia,serif; font-size:16px; background:var(--off-white); color:var(--ink); outline:none; -webkit-appearance:none; transition:border-color 0.15s; }
+.meta-field input:focus { border-color:var(--navy); }
+.meta-full { grid-column:1/-1; }
+
+/* ── YNN Items ── */
+.ynn-item { border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; margin-bottom:10px; background:var(--off-white); }
+.ynn-label-row { padding:12px 13px 8px; }
+.ynn-main-label { font-size:16px; color:var(--ink); line-height:1.5; margin-bottom:3px; }
+.ynn-examples { font-size:13px; color:#444440; font-style:italic; line-height:1.5; }
+.ynn-buttons { display:flex; border-top:1px solid var(--rule); }
+.ynn-btn { flex:1; padding:11px 6px; border:none; border-right:1px solid var(--rule); background:var(--off-white); font-family:Georgia,serif; font-size:15px; color:var(--ink-light); cursor:pointer; text-align:center; transition:all 0.15s; -webkit-tap-highlight-color:transparent; line-height:1.3; }
+.ynn-btn:last-child { border-right:none; }
+.ynn-btn.yes-active { background:var(--green-bg); color:#2a6a20; font-weight:bold; }
+.ynn-btn.no-active  { background:var(--red-bg); color:#8a2020; font-weight:bold; }
+.ynn-btn.na-active  { background:#efefef; color:#555; font-weight:bold; }
+.ynn-evidence { padding:10px 13px 12px; background:var(--white); display:none; border-top:1px solid var(--rule); }
+.ynn-evidence.open { display:block; }
+.ynn-evidence label { font-size:13px; color:var(--ink-light); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px; font-weight:bold; }
+.ynn-evidence textarea { width:100%; padding:9px 11px; border:1px solid var(--rule); border-radius:7px; font-family:Georgia,serif; font-size:15px; background:var(--off-white); color:var(--ink); resize:none; outline:none; line-height:1.6; min-height:60px; -webkit-appearance:none; }
+.ynn-evidence textarea:focus { border-color:var(--navy); }
+
+/* ── Concern Items ── */
+.concern-item { border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; margin-bottom:8px; background:var(--off-white); }
+.concern-label-row { padding:12px 13px 8px; }
+.concern-label { font-size:16px; color:var(--ink); line-height:1.5; }
+.concern-buttons { display:flex; border-top:1px solid var(--rule); }
+.concern-btn { flex:1; padding:11px 6px; border:none; border-right:1px solid var(--rule); background:var(--off-white); font-family:Georgia,serif; font-size:15px; color:var(--ink-light); cursor:pointer; text-align:center; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
+.concern-btn:last-child { border-right:none; }
+.concern-btn.yes-active { background:var(--red-bg); color:#8a2020; font-weight:bold; }
+.concern-btn.no-active  { background:var(--green-bg); color:#2a6a20; font-weight:bold; }
+.concern-evidence { padding:10px 13px 12px; background:var(--white); display:none; border-top:1px solid var(--rule); }
+.concern-evidence.open { display:block; }
+.concern-evidence label { font-size:13px; color:var(--ink-light); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px; font-weight:bold; }
+.concern-evidence textarea { width:100%; padding:9px 11px; border:1px solid var(--rule); border-radius:7px; font-family:Georgia,serif; font-size:15px; background:var(--off-white); color:var(--ink); resize:none; outline:none; line-height:1.6; min-height:60px; -webkit-appearance:none; }
+.concern-evidence textarea:focus { border-color:var(--navy); }
+
+/* ── Student Tally ── */
+.student-add-row { display:flex; gap:8px; margin-bottom:12px; }
+.student-add-row input { flex:1; padding:9px 12px; border:1px solid var(--rule); border-radius:7px; font-family:Georgia,serif; font-size:16px; background:var(--off-white); color:var(--ink); outline:none; -webkit-appearance:none; }
+.student-add-row input:focus { border-color:var(--navy); }
+.btn-add { padding:9px 18px; background:var(--navy); color:var(--white); border:none; border-radius:7px; font-family:Georgia,serif; font-size:16px; cursor:pointer; white-space:nowrap; -webkit-tap-highlight-color:transparent; }
+.chips-wrap { display:flex; flex-wrap:wrap; gap:9px; }
+.chip { display:flex; align-items:center; gap:7px; background:var(--off-white); border:1px solid var(--rule); border-radius:8px; padding:6px 10px; }
+.chip-name { font-size:15px; color:var(--ink); min-width:50px; }
+.chip-btn { width:44px; height:44px; border-radius:50%; border:2px solid var(--navy); background:transparent; color:var(--navy); font-family:Georgia,serif; font-size:16px; font-weight:bold; cursor:pointer; transition:all 0.12s; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
+.chip-btn.active { background:var(--navy); color:var(--white); }
+.chip-remove { background:none; border:none; color:var(--ink-light); cursor:pointer; font-size:20px; padding:2px; line-height:1; }
+.empty-hint { font-size:15px; color:var(--ink-light); font-style:italic; }
+
+/* ── Scan ── */
+.scan-grid { display:grid; grid-template-columns:1.3fr 1fr 1fr 1fr; gap:6px; align-items:center; }
+.scan-header { font-size:13px; color:var(--ink-light); font-weight:bold; padding-bottom:4px; text-align:center; }
+.scan-header:first-child { text-align:left; }
+.scan-label { font-size:15px; color:var(--ink); }
+.scan-input { padding:8px 4px; border-radius:7px; font-family:Georgia,serif; font-size:15px; text-align:center; width:100%; outline:none; -webkit-appearance:none; border:1px solid var(--rule); }
+.scan-input.green { background:var(--green-bg); border-color:var(--green-bd); }
+.scan-input.amber { background:var(--warn-bg); border-color:var(--warn-bd); }
+.scan-input.red   { background:var(--red-bg); border-color:var(--red-bd); }
+.scan-note { font-size:13px; color:#444440; font-style:italic; margin-top:10px; line-height:1.6; }
+
+/* ── Narrative ── */
+.narrative-prompt { font-size:15px; color:var(--gold-text); font-style:italic; margin-bottom:9px; line-height:1.6; }
+.narrative-ta { width:100%; padding:12px; border:1px solid var(--rule); border-radius:var(--radius); font-family:Georgia,serif; font-size:16px; background:var(--off-white); color:var(--ink); resize:vertical; outline:none; line-height:1.7; min-height:100px; -webkit-appearance:none; }
+.narrative-ta:focus { border-color:var(--navy); }
+
+/* ── Rating ── */
+.rating-note { font-size:14px; color:var(--ink-light); font-style:italic; margin-bottom:11px; line-height:1.5; }
+.rating-row { display:flex; gap:9px; }
+@media(max-width:380px){ .rating-row { flex-direction:column; } }
+.rating-btn { flex:1; padding:13px 6px; border-radius:var(--radius); border:2px solid var(--rule); background:var(--off-white); font-family:Georgia,serif; font-size:15px; color:var(--ink-light); cursor:pointer; text-align:center; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
+.rating-btn.strong     { border-color:#4a8a40; background:var(--green-bg); color:#2a6a20; font-weight:bold; }
+.rating-btn.developing { border-color:#b8860b; background:var(--warn-bg); color:#7a5800; font-weight:bold; }
+.rating-btn.needs      { border-color:#b84040; background:var(--red-bg); color:#8a2020; font-weight:bold; }
+
+/* ── Coaching ── */
+.coaching-box { background:var(--navy); border-radius:var(--radius); padding:16px 18px; }
+.coaching-label { font-size:13px; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; font-weight:bold; }
+.coaching-q { font-size:15px; color:var(--white); line-height:1.65; font-style:italic; }
+
+/* ── Action Buttons ── */
+.action-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; padding-top:4px; align-items:flex-start; }
+.action-col { display:flex; flex-direction:column; align-items:center; gap:10px; flex:1; min-width:160px; max-width:220px; }
+.action-hint { font-size:13px; color:var(--ink-light); line-height:1.55; text-align:center; font-style:italic; }
+.hint-cols { display:flex; gap:20px; width:100%; }
+.hint-cols .action-hint { flex:1; text-align:left; border-left:2px solid var(--rule); padding-left:14px; }
+.action-btn {
+  padding:13px 22px;
+  border-radius:8px;
+  font-family:Georgia,serif;
+  font-size:16px;
+  cursor:pointer;
+  border:none;
+  transition:all 0.15s;
+  -webkit-tap-highlight-color:transparent;
+  min-width:120px;
+  text-align:center;
+}
+.btn-clear  { background:var(--off-white); border:1px solid var(--rule); color:var(--ink-light); }
+.btn-pdf    { background:var(--gold); color:var(--navy); font-weight:bold; }
+.btn-print  { background:var(--navy); color:var(--white); }
+
+/* ── Print / PDF Styles ── */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  body { background: white; }
+  #topbar { display:none; }
+  .action-row, .btn-add, .chip-remove, .student-add-row { display:none !important; }
+  #page { padding:0; max-width:100%; }
+  .card { box-shadow:none; border:1px solid #ccc; border-radius:6px; margin-bottom:12px; page-break-inside:avoid; }
+  .card-header { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .framework-badge { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .coaching-box { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .ynn-btn, .concern-btn { display:none; }
+  .ynn-selected-label, .concern-selected-label { display:block !important; }
+  .ynn-evidence { display:block !important; }
+  .concern-evidence { display:block !important; }
+  .chip-btn { width:auto; height:auto; border-radius:4px; padding:2px 8px; border:1px solid var(--navy); }
+  .scan-input { border:1px solid #ccc; }
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  
+  <span class="tag">Internal Observer Tool · Not Shared With Teachers</span>
+</div>
+
+<div id="page">
+
+  <!-- HEADER CARD -->
+  <div class="card">
+    <div class="card-header">
+      
+      <div class="header-divider">
+        <div class="header-eyebrow">Drop-In Observation · 20 Minutes · Internal Only</div>
+        <div class="header-title">Engagement & Attention</div>
+        <div class="header-sub">Are students genuinely engaged — and is the teacher drawing them in?</div>
+      </div>
+    </div>
+    <div class="card-body">
+
+      <div class="framework-badge">
+        <div class="badge-row">
+          <span class="badge-pill">CTEs</span>
+          <span class="badge-items">Classroom Culture — Engagement (including attention as precondition) · Classroom Culture — Fellowship</span>
+        </div>
+        <div class="badge-row">
+          <span class="badge-pill">Dispositions</span>
+          <span class="badge-items">Joy · High Engagement · Conscientiousness · Personal Regard</span>
+        </div>
+        <div class="badge-row">
+          <span class="badge-pill">Seven Laws</span>
+          <span class="badge-items">Law 2 — The Law of the Learner: the teacher must secure and hold student attention before engagement is possible</span>
+        </div>
+      </div>
+
+      <div class="focus-box">
+        <div class="section-label" style="color:var(--gold-text)">Observer Focus</div>
+        <div class="focus-statement">Are students genuinely engaged with the lesson, or just present? Is the teacher actively securing and holding attention — and drawing students into a love for what they're learning?</div>
+        <div class="lookfor-header">Specific Look-Fors</div>
+        <div class="lookfor-row"><span class="lookfor-arrow">▸</span><span class="lookfor-text">Attention comes before engagement. Are students first attending — eyes up, posture upright, minds present?</span></div>
+        <div class="lookfor-row"><span class="lookfor-arrow">▸</span><span class="lookfor-text">Is the lesson itself engaging, or does engagement depend entirely on the teacher's personality?</span></div>
+        <div class="lookfor-row"><span class="lookfor-arrow">▸</span><span class="lookfor-text">Is the teacher noticing drift and responding — or missing it?</span></div>
+        <div class="lookfor-row"><span class="lookfor-arrow">▸</span><span class="lookfor-text">Phones, open laptops, and side conversations are the visible evidence of lost attention — note them specifically.</span></div>
+      </div>
+
+      <div>
+        <div class="section-label">Observation Details</div>
+        <div class="meta-grid">
+          <div class="meta-field"><label>Teacher</label><input type="text" id="m-teacher" placeholder="Last name, First"></div>
+          <div class="meta-field"><label>Observer</label><input type="text" id="m-observer" placeholder="Your name"></div>
+          <div class="meta-field"><label>Subject / Class</label><input type="text" id="m-subject" placeholder="e.g. Rhetoric, Geometry"></div>
+          <div class="meta-field"><label>Date</label><input type="date" id="m-date"></div>
+          <div class="meta-field"><label>Arrival Time</label><input type="time" id="m-time"></div>
+          <div class="meta-field meta-full"><label>Where in the lesson did you arrive?</label><input type="text" id="m-context" placeholder='e.g. "8 min in, mid-discussion" or "opening of class"'></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ENGAGEMENT SCAN CARD -->
+  <div class="card">
+    <div class="card-body">
+      <div>
+        <div class="section-label">Engagement Scan</div>
+        <p class="section-note">Every 4–5 minutes, do a quick count of the room. Start this as soon as you arrive. Your honest estimate is enough.</p>
+        <div class="scan-grid">
+          <div class="scan-header" style="text-align:left">Interval</div>
+          <div class="scan-header">Engaged</div>
+          <div class="scan-header">Passive</div>
+          <div class="scan-header">Distracted</div>
+          <div class="scan-label">0–5 min</div>
+          <input class="scan-input green" type="number" min="0" placeholder="—">
+          <input class="scan-input amber" type="number" min="0" placeholder="—">
+          <input class="scan-input red"   type="number" min="0" placeholder="—">
+          <div class="scan-label">5–10 min</div>
+          <input class="scan-input green" type="number" min="0" placeholder="—">
+          <input class="scan-input amber" type="number" min="0" placeholder="—">
+          <input class="scan-input red"   type="number" min="0" placeholder="—">
+          <div class="scan-label">10–15 min</div>
+          <input class="scan-input green" type="number" min="0" placeholder="—">
+          <input class="scan-input amber" type="number" min="0" placeholder="—">
+          <input class="scan-input red"   type="number" min="0" placeholder="—">
+          <div class="scan-label">15–20 min</div>
+          <input class="scan-input green" type="number" min="0" placeholder="—">
+          <input class="scan-input amber" type="number" min="0" placeholder="—">
+          <input class="scan-input red"   type="number" min="0" placeholder="—">
+        </div>
+        <p class="scan-note">Engaged = actively thinking or participating &nbsp;·&nbsp; Passive = present but not participating &nbsp;·&nbsp; Distracted = visibly off-task</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENT ATTENTION CARD -->
+  <div class="card">
+    <div class="card-body">
+      <div>
+        <div class="section-label">Student Attention & Presence</div>
+        <p class="section-note">Select Yes, No, or Not Observable for positive items. No opens an evidence box. For specific concerns, Yes opens an evidence box.</p>
+
+        <div class="subsection-label">Positive Observations</div>
+
+        <div class="ynn-item" id="att1">
+          <div class="ynn-label-row">
+            <div class="ynn-main-label">Students appeared attentive — eyes tracking, not visibly distracted</div>
+            <div class="ynn-examples">Examples: eyes on the teacher or on whoever is speaking, not looking around, not staring blankly, not checking devices</div>
+          </div>
+          <div class="ynn-buttons">
+            <button class="ynn-btn" onclick="setYNN('att1','yes',false,false)">Yes</button>
+            <button class="ynn-btn" onclick="setYNN('att1','no',false,true)">No</button>
+            <button class="ynn-btn" onclick="setYNN('att1','na',false,false)">Not Observable</button>
+          </div>
+          <div class="ynn-evidence" id="att1-ev">
+            <label>Evidence — what did you observe?</label>
+            <textarea rows="2" placeholder="Which students, what were they doing instead..."></textarea>
+          </div>
+        </div>
+
+        <div class="ynn-item" id="att2">
+          <div class="ynn-label-row">
+            <div class="ynn-main-label">Students demonstrated attentive posture — upright, leaning in, not slouched or leaning back</div>
+            <div class="ynn-examples">Examples: sitting up straight, leaning forward during discussion, bodies oriented toward the teacher or toward whoever is speaking</div>
+          </div>
+          <div class="ynn-buttons">
+            <button class="ynn-btn" onclick="setYNN('att2','yes',false,false)">Yes</button>
+            <button class="ynn-btn" onclick="setYNN('att2','no',false,true)">No</button>
+            <button class="ynn-btn" onclick="setYNN('att2','na',false,false)">Not Observable</button>
+          </div>
+          <div class="ynn-evidence" id="att2-ev">
+            <label>Evidence — what did you observe?</label>
+            <textarea rows="2" placeholder="Which students, what did their posture look like..."></textarea>
+          </div>
+        </div>
+
+        <div class="ynn-item" id="resp1">
+          <div class="ynn-label-row">
+            <div class="ynn-main-label">Teacher addressed visible disengagement</div>
+            <div class="ynn-examples">Examples: paused and waited, moved toward a distracted student, changed pace or tone, made direct eye contact, called a name gently, shifted the activity to re-engage</div>
+          </div>
+          <div class="ynn-buttons">
+            <button class="ynn-btn" onclick="setYNN('resp1','yes',true,true)">Yes</button>
+            <button class="ynn-btn" onclick="setYNN('resp1','no',true,true)">No</button>
+            <button class="ynn-btn" onclick="setYNN('resp1','na',false,false)">Not Observable</button>
+          </div>
+          <div class="ynn-evidence" id="resp1-ev">
+            <label id="resp1-lbl">Evidence</label>
+            <textarea rows="2" id="resp1-ta" placeholder="..."></textarea>
+          </div>
+        </div>
+
+        <div class="subsection-label" style="margin-top:16px">Specific Concerns</div>
+
+        <div class="concern-item">
+          <div class="concern-label-row">
+            <div class="concern-label">Were phones visible or in use during instruction?</div>
+          </div>
+          <div class="concern-buttons">
+            <button class="concern-btn" onclick="setConcern(this,'yes','c1')">Yes</button>
+            <button class="concern-btn" onclick="setConcern(this,'no','c1')">No</button>
+          </div>
+          <div class="concern-evidence" id="c1">
+            <label>Who, what, and did the teacher address it?</label>
+            <textarea rows="2" placeholder="Student name(s), behavior, teacher response..."></textarea>
+          </div>
+        </div>
+
+        <div class="concern-item">
+          <div class="concern-label-row">
+            <div class="concern-label">Were laptops used for off-task activity?</div>
+          </div>
+          <div class="concern-buttons">
+            <button class="concern-btn" onclick="setConcern(this,'yes','c2')">Yes</button>
+            <button class="concern-btn" onclick="setConcern(this,'no','c2')">No</button>
+          </div>
+          <div class="concern-evidence" id="c2">
+            <label>Who, what, and did the teacher address it?</label>
+            <textarea rows="2" placeholder="Student name(s), behavior, teacher response..."></textarea>
+          </div>
+        </div>
+
+        <div class="concern-item">
+          <div class="concern-label-row">
+            <div class="concern-label">Were there distracting side conversations during instruction?</div>
+          </div>
+          <div class="concern-buttons">
+            <button class="concern-btn" onclick="setConcern(this,'yes','c3')">Yes</button>
+            <button class="concern-btn" onclick="setConcern(this,'no','c3')">No</button>
+          </div>
+          <div class="concern-evidence" id="c3">
+            <label>Who, when, and did the teacher address it?</label>
+            <textarea rows="2" placeholder="Student name(s), when it happened, teacher response..."></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- TEACHER JOY CARD -->
+  <div class="card">
+    <div class="card-body">
+      <div>
+        <div class="section-label">Teacher Joy & Investment</div>
+        <p class="section-note">Select Yes, No, or Not Observable for each item. Yes and No open an evidence box — write a specific moment, name, or quote. Not Observable means the lesson type didn't create a clear opportunity to see this.</p>
+
+        <div class="ynn-item" id="joy1">
+          <div class="ynn-label-row">
+            <div class="ynn-main-label">Teacher appeared to genuinely enjoy the lesson</div>
+            <div class="ynn-examples">Examples: smiling naturally, animated voice, leaning in, unhurried delight in the content, visible enthusiasm for the material</div>
+          </div>
+          <div class="ynn-buttons">
+            <button class="ynn-btn" onclick="setYNN('joy1','yes',true,true)">Yes</button>
+            <button class="ynn-btn" onclick="setYNN('joy1','no',true,true)">No</button>
+            <button class="ynn-btn" onclick="setYNN('joy1','na',false,false)">Not Observable</button>
+          </div>
+          <div class="ynn-evidence" id="joy1-ev">
+            <label id="joy1-lbl">Evidence — what did you see or hear?</label>
+            <textarea rows="2" id="joy1-ta" placeholder="Specific moment, quote, or behavior..."></textarea>
+          </div>
+        </div>
+
+        <div class="ynn-item" id="joy2">
+          <div class="ynn-label-row">
+            <div class="ynn-main-label">Teacher's love for the subject was visible to students</div>
+            <div class="ynn-examples">Examples: shared why this topic matters personally, went deeper than required, lit up when discussing content, referenced their own wonder at the subject</div>
+          </div>
+          <div class="ynn-buttons">
+            <button class="ynn-btn" onclick="setYNN('joy2','yes',true,true)">Yes</button>
+            <button class="ynn-btn" onclick="setYNN('joy2','no',true,true)">No</button>
+            <button class="ynn-btn" onclick="setYNN('joy2','na',false,false)">Not Observable</button>
+          </div>
+          <div class="ynn-evidence" id="joy2-ev">
+            <label id="joy2-lbl">Evidence — specific moment or quote</label>
+            <textarea rows="2" id="joy2-ta" placeholder="What did the teacher say or do?"></textarea>
+          </div>
+        </div>
+
+        <div class="ynn-item" id="joy3">
+          <div class="ynn-label-row">
+            <div class="ynn-main-label">Teacher demonstrated genuine personal regard for students — wanted them there, wanted them to succeed</div>
+            <div class="ynn-examples">Examples: used student names warmly, made eye contact, referenced something personal about a student, expressed excitement for a student's growth, corrected without contempt</div>
+          </div>
+          <div class="ynn-buttons">
+            <button class="ynn-btn" onclick="setYNN('joy3','yes',true,true)">Yes</button>
+            <button class="ynn-btn" onclick="setYNN('joy3','no',true,true)">No</button>
+            <button class="ynn-btn" onclick="setYNN('joy3','na',false,false)">Not Observable</button>
+          </div>
+          <div class="ynn-evidence" id="joy3-ev">
+            <label id="joy3-lbl">Evidence — what did you see or hear?</label>
+            <textarea rows="2" id="joy3-ta" placeholder="Specific moment, name, or exchange..."></textarea>
+          </div>
+        </div>
+
+        <div class="ynn-item" id="joy4">
+          <div class="ynn-label-row">
+            <div class="ynn-main-label">Teacher was actively drawing students into loving what they were learning</div>
+            <div class="ynn-examples">Examples: connected content to students' lives, expressed genuine curiosity openly, designed a task students actually wanted to do, shared personal wonder at the material</div>
+          </div>
+          <div class="ynn-buttons">
+            <button class="ynn-btn" onclick="setYNN('joy4','yes',true,true)">Yes</button>
+            <button class="ynn-btn" onclick="setYNN('joy4','no',true,true)">No</button>
+            <button class="ynn-btn" onclick="setYNN('joy4','na',false,false)">Not Observable</button>
+          </div>
+          <div class="ynn-evidence" id="joy4-ev">
+            <label id="joy4-lbl">Evidence — what did the teacher do or say to draw students in?</label>
+            <textarea rows="2" id="joy4-ta" placeholder="Specific moment or approach..."></textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- NARRATIVE + RATING + COACHING CARD -->
+  <div class="card">
+    <div class="card-body">
+
+      <div>
+        <div class="section-label">Most Important Observation</div>
+        <div class="narrative-prompt">Describe one specific moment where student attention was either won or lost. What did the teacher do — or not do — that made the difference?</div>
+        <textarea class="narrative-ta" rows="5" placeholder="Be specific — name the moment, quote the teacher or student if you can, describe what you saw..."></textarea>
+      </div>
+
+      <div>
+        <div class="section-label">Overall Impression</div>
+        <div class="rating-note">Your honest read — not a final evaluation. This informs your coaching conversation, not the teacher's file.</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="setRating(this,'strong')">Strong</button>
+          <button class="rating-btn" onclick="setRating(this,'developing')">Developing</button>
+          <button class="rating-btn" onclick="setRating(this,'needs')">Needs Attention</button>
+        </div>
+        <div id="rating-notes" style="display:none; margin-top:14px;">
+          <label style="font-size:13px; color:var(--ink-light); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:6px; font-weight:bold;">Observer Notes — summary or anything not captured above</label>
+          <textarea class="narrative-ta" rows="4" placeholder="Summarize your overall impression, note patterns across the form, or add anything that didn't fit elsewhere..."></textarea>
+        </div>
+      </div>
+
+      <div class="coaching-box">
+        <div class="coaching-label">Debrief Coaching Question</div>
+        <div class="coaching-q">"If you could replay one moment from today's lesson, which moment would you want to do differently — and what would you do instead?"</div>
+      </div>
+
+      <!-- TWO ACTION BUTTONS -->
+      <div class="action-row">
+
+        <div class="action-col">
+          <button class="action-btn btn-clear" onclick="clearAll()">Clear Form</button>
+          <p class="action-hint">Wipes all entries and resets the form. You will be asked to confirm before anything is deleted.</p>
+        </div>
+
+        <div class="action-col">
+          <button class="action-btn btn-pdf" onclick="savePDF()">Save as PDF / Print</button>
+          <p class="action-hint">
+            <strong>To save as PDF —</strong><br>
+            <strong>Mac:</strong> Click the PDF button in the bottom left of the print dialog → Save as PDF → save to the teacher's folder in Google Drive.<br>
+            <strong>iPhone / iPad:</strong> Pinch outward on the page preview with two fingers → tap the Share icon → Save to Files or Google Drive → navigate to the teacher's folder.<br><br>
+            <strong>To print —</strong><br>
+            Select your printer from the print dialog and tap Print. Make sure your printer is connected via AirPrint before tapping.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+function setYNN(id, type, openYes, openNo) {
+  const item = document.getElementById(id);
+  const btns = item.querySelectorAll('.ynn-btn');
+  const activeClass = type === 'yes' ? 'yes-active' : type === 'no' ? 'no-active' : 'na-active';
+  const alreadyActive = btns[type === 'yes' ? 0 : type === 'no' ? 1 : 2].classList.contains(activeClass);
+  btns.forEach(b => b.className = 'ynn-btn');
+  const ev = document.getElementById(id + '-ev');
+  if (alreadyActive) { if (ev) ev.classList.remove('open'); return; }
+  if (type === 'yes') btns[0].classList.add('yes-active');
+  if (type === 'no')  btns[1].classList.add('no-active');
+  if (type === 'na')  btns[2].classList.add('na-active');
+  if (!ev) return;
+  const shouldOpen = (type === 'yes' && openYes) || (type === 'no' && openNo);
+  ev.classList.toggle('open', shouldOpen);
+  const lbl = document.getElementById(id + '-lbl');
+  const ta  = document.getElementById(id + '-ta');
+  if (lbl && ta) {
+    if (id === 'joy1') {
+      if (type === 'yes') { lbl.textContent = 'Evidence — what did you see or hear?'; ta.placeholder = 'Specific moment, quote, or behavior...'; }
+      if (type === 'no')  { lbl.textContent = 'What was absent — what did you not see?'; ta.placeholder = 'What would you have expected to see that wasn\'t there?'; }
+    }
+    if (id === 'joy2') {
+      if (type === 'yes') { lbl.textContent = 'Evidence — specific moment or quote'; ta.placeholder = 'What did the teacher say or do?'; }
+      if (type === 'no')  { lbl.textContent = 'What was absent — what did you not see?'; ta.placeholder = 'What would you have expected to see that wasn\'t there?'; }
+    }
+    if (id === 'joy3') {
+      if (type === 'yes') { lbl.textContent = 'Evidence — what did you see or hear?'; ta.placeholder = 'Specific moment, name, or exchange...'; }
+      if (type === 'no')  { lbl.textContent = 'What was absent — what did you not see?'; ta.placeholder = 'What would you have expected to see that wasn\'t there?'; }
+    }
+    if (id === 'joy4') {
+      if (type === 'yes') { lbl.textContent = 'Evidence — what did the teacher do or say to draw students in?'; ta.placeholder = 'Specific moment or approach...'; }
+      if (type === 'no')  { lbl.textContent = 'What was absent — what did you not see?'; ta.placeholder = 'What would you have expected to see that wasn\'t there?'; }
+    }
+    if (id === 'resp1') {
+      if (type === 'yes') { lbl.textContent = 'What did the teacher do?'; ta.placeholder = 'Specific action or moment...'; }
+      if (type === 'no')  { lbl.textContent = 'What was missed and when?'; ta.placeholder = 'Which students, what behavior, when in the lesson...'; }
+    }
+  }
+}
+
+function setConcern(btn, type, evidenceId) {
+  const item = btn.closest('.concern-item');
+  const alreadyActive = btn.classList.contains(type + '-active');
+  item.querySelectorAll('.concern-btn').forEach(b => b.className = 'concern-btn');
+  const ev = document.getElementById(evidenceId);
+  if (alreadyActive) { ev.classList.remove('open'); return; }
+  btn.classList.add(type + '-active');
+  ev.classList.toggle('open', type === 'yes');
+}
+
+function setRating(btn, type) {
+  const alreadyActive = btn.classList.contains(type);
+  document.querySelectorAll('.rating-btn').forEach(b => {
+    b.className = 'rating-btn';
+    b.textContent = b.textContent.replace('✓ ', '');
+  });
+  const notesBox = document.getElementById('rating-notes');
+  if (alreadyActive) {
+    notesBox.style.display = 'none';
+    return;
+  }
+  btn.classList.add(type);
+  btn.textContent = '✓ ' + btn.textContent;
+  notesBox.style.display = 'block';
+}
+
+// ── Save PDF ──────────────────────────────────────────────
+function savePDF() {
+  // Get teacher name and date for the filename suggestion
+  const teacher = document.getElementById('m-teacher').value.trim() || 'Observation';
+  const date = document.getElementById('m-date').value || new Date().toISOString().split('T')[0];
+  const filename = teacher + ' — Engagement — ' + date;
+
+  // Open all evidence boxes so nothing is hidden in the PDF
+  document.querySelectorAll('.ynn-evidence, .concern-evidence').forEach(e => {
+    e.dataset.wasOpen = e.classList.contains('open');
+    e.classList.add('open');
+  });
+
+  // Set the document title so the browser uses it as the default filename
+  const origTitle = document.title;
+  document.title = filename;
+
+  // Trigger print dialog (on iOS this becomes Save to PDF via share sheet)
+  window.print();
+
+  // Restore after a moment
+  setTimeout(() => {
+    document.title = origTitle;
+    document.querySelectorAll('.ynn-evidence, .concern-evidence').forEach(e => {
+      if (!e.dataset.wasOpen || e.dataset.wasOpen === 'false') {
+        e.classList.remove('open');
+      }
+      delete e.dataset.wasOpen;
+    });
+  }, 1000);
+}
+
+function clearAll() {
+  if (!confirm('Clear this entire form? This cannot be undone.')) return;
+  document.querySelectorAll('input[type=text],input[type=date],input[type=time],input[type=number],textarea').forEach(el => el.value = '');
+  document.querySelectorAll('.ynn-btn').forEach(b => b.className = 'ynn-btn');
+  document.querySelectorAll('.ynn-evidence').forEach(e => e.classList.remove('open'));
+  document.querySelectorAll('.concern-btn').forEach(b => b.className = 'concern-btn');
+  document.querySelectorAll('.concern-evidence').forEach(e => e.classList.remove('open'));
+  document.querySelectorAll('.rating-btn').forEach(b => {
+    b.className = 'rating-btn';
+    b.textContent = b.textContent.replace('✓ ', '');
+  });
+  document.getElementById('rating-notes').style.display = 'none';
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
