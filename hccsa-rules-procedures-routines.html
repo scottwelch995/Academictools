@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rules, Procedures & Routines — Reference Guide</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:      #1a2e4a;
+  --navy-dark: #0f1d30;
+  --navy-mid:  #243d5c;
+  --gold:      #c8a84b;
+  --gold-pale: #fdf6e3;
+  --gold-text: #7a6010;
+  --white:     #ffffff;
+  --off-white: #f8f7f4;
+  --rule:      #e0d8cc;
+  --ink:       #1c1c1a;
+  --ink-light: #555550;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
+
+body {
+  font-family: 'EB Garamond', Georgia, serif;
+  background: var(--off-white);
+  color: var(--ink);
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid var(--rule);
+  box-shadow: 0 4px 40px rgba(0,0,0,0.10);
+}
+
+/* ── Header ── */
+.page-header {
+  background: var(--navy);
+  padding: 32px 40px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0; bottom: 0;
+  width: 6px;
+  background: var(--gold);
+}
+.header-eyebrow {
+  font-family: 'EB Garamond', serif;
+  font-size: 11px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  color: var(--white);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.header-sub {
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ── Body ── */
+.page-body { padding: 36px 40px; }
+
+/* ── Key Insight Box ── */
+.insight-box {
+  background: var(--navy);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-bottom: 32px;
+  position: relative;
+  border-left: 4px solid var(--gold);
+}
+.insight-label {
+  font-size: 10px;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.insight-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  color: var(--white);
+  line-height: 1.55;
+  font-style: italic;
+}
+
+/* ── Three Columns ── */
+.three-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+.col {
+  padding: 22px 20px;
+  border-right: 1px solid var(--rule);
+}
+.col:last-child { border-right: none; }
+.col-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--gold);
+}
+.col-tag {
+  font-size: 10px;
+  color: var(--gold-text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.col-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  color: var(--navy);
+  font-weight: 700;
+  line-height: 1.1;
+}
+.col-def {
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.6;
+  margin-bottom: 14px;
+  font-style: italic;
+}
+.col-list {
+  list-style: none;
+  padding: 0;
+}
+.col-list li {
+  font-size: 14px;
+  color: var(--ink-light);
+  line-height: 1.55;
+  padding: 4px 0;
+  padding-left: 14px;
+  position: relative;
+}
+.col-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+  font-size: 11px;
+  top: 6px;
+}
+.col-note {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--rule);
+  font-size: 13px;
+  color: var(--gold-text);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* ── Cycle Section ── */
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--navy);
+  font-weight: 700;
+  margin-bottom: 6px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gold);
+  display: inline-block;
+}
+.section-intro {
+  font-size: 15px;
+  color: var(--ink-light);
+  line-height: 1.65;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+/* ── Five Steps ── */
+.five-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 32px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.step {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--rule);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  width: 52px;
+  flex-shrink: 0;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--gold);
+  font-weight: 700;
+}
+.step.foundation .step-num {
+  background: var(--gold);
+  color: var(--navy);
+}
+.step-content {
+  padding: 14px 18px;
+  flex: 1;
+}
+.step-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  color: var(--navy);
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+.step.foundation .step-name { color: var(--navy); }
+.step-desc {
+  font-size: 14px;
+  color: var(--ink-light);
+  line-height: 1.55;
+}
+.step-scripture {
+  font-size: 12px;
+  color: var(--gold-text);
+  font-style: italic;
+  margin-top: 4px;
+}
+
+/* ── Thesis Box ── */
+.thesis-box {
+  background: var(--gold-pale);
+  border: 1px solid var(--gold);
+  border-radius: 4px;
+  padding: 20px 24px;
+  margin-bottom: 32px;
+  text-align: center;
+}
+.thesis-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: var(--navy);
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.5;
+}
+.thesis-attr {
+  font-size: 12px;
+  color: var(--gold-text);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 8px;
+}
+
+/* ── Two Col Layout ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+/* ── Cycle Visual ── */
+.cycle-box {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 20px;
+  background: var(--off-white);
+}
+.cycle-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  color: var(--navy);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.cycle-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cycle-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.cycle-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.cycle-item.positive .cycle-dot { background: var(--navy); }
+.cycle-item.discipline .cycle-dot { background: var(--gold-text); }
+.cycle-arrow {
+  font-size: 11px;
+  color: var(--gold);
+  text-align: center;
+  padding-left: 14px;
+}
+
+/* ── Teaching Method ── */
+.method-box {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 20px;
+}
+.method-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  color: var(--navy);
+  font-weight: 700;
+  margin-bottom: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.method-step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+.method-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.method-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  color: var(--navy);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+}
+.method-desc {
+  font-size: 13px;
+  color: var(--ink-light);
+  line-height: 1.5;
+}
+
+/* ── Footer ── */
+.page-footer {
+  background: var(--navy-dark);
+  padding: 14px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.footer-note {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  font-style: italic;
+}
+.footer-ref {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+}
+
+@media print {
+  body { background: white; padding: 0; }
+  .page { box-shadow: none; border: none; }
+}
+
+@media (max-width: 700px) {
+  .three-col { grid-template-columns: 1fr; }
+  .col { border-right: none; border-bottom: 1px solid var(--rule); }
+  .two-col { grid-template-columns: 1fr; }
+  .page-header { padding: 24px 20px; }
+  .page-body { padding: 24px 20px; }
+  .page-footer { padding: 14px 20px; flex-direction: column; gap: 6px; text-align: center; }
+  .header-title { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="header-eyebrow">Teacher Reference Guide · Classroom Culture & Management</div>
+    <div class="header-title">Rules, Procedures & Routines</div>
+    <div class="header-sub">What we establish, how we teach it, and why it matters for our students</div>
+  </div>
+
+  <div class="page-body">
+
+    <!-- KEY INSIGHT -->
+    <div class="insight-box">
+      <div class="insight-label">The Central Insight</div>
+      <div class="insight-text">The number one problem in most classrooms is not discipline — it is the absence of clearly taught procedures. Most behavior problems are not defiance problems. They are procedure problems.</div>
+    </div>
+
+    <!-- THREE COLUMNS -->
+    <div style="margin-bottom:8px">
+      <span class="section-title">Three Distinct Concepts</span>
+    </div>
+    <p class="section-intro">These three things are related but not the same. Confusing them leads to classroom management that is reactive, exhausting, and inconsistent.</p>
+
+    <div class="three-col">
+
+      <div class="col">
+        <div class="col-header">
+          <span class="col-tag">Discipline</span>
+          <span class="col-title">Rules</span>
+        </div>
+        <div class="col-def">General standards for moral behavior in the classroom and school community.</div>
+        <ul class="col-list">
+          <li>Reactive — invoked when broken</li>
+          <li>Govern conduct and character</li>
+          <li>Breaking a rule carries a consequence</li>
+          <li>Should be few in number</li>
+          <li>Must be 100% consistently enforced</li>
+          <li>Apply at all times, in all situations</li>
+        </ul>
+        <div class="col-note">Rules define the moral boundaries of the community. They are non-negotiable.</div>
+      </div>
+
+      <div class="col">
+        <div class="col-header">
+          <span class="col-tag">Discipleship</span>
+          <span class="col-title">Procedures</span>
+        </div>
+        <div class="col-def">The specific methods and processes for how things are done in your classroom.</div>
+        <ul class="col-list">
+          <li>Proactive — taught before they are needed</li>
+          <li>Show students how things are done</li>
+          <li>Breaking a procedure leads to retraining</li>
+          <li>Every recurring activity needs one</li>
+          <li>Taught explicitly — not assumed</li>
+          <li>Make the classroom organized and effective</li>
+        </ul>
+        <div class="col-note">Procedures are discipleship. You are training students in the habits of a learner.</div>
+      </div>
+
+      <div class="col">
+        <div class="col-header">
+          <span class="col-tag">Rhythm</span>
+          <span class="col-title">Routines</span>
+        </div>
+        <div class="col-def">The habitual rhythms and structures that define how your classroom flows — not triggered by a student need, but built into the shape of the day.</div>
+        <ul class="col-list">
+          <li>Intentional — chosen and established by the teacher</li>
+          <li>Consistent — happen the same way, every time</li>
+          <li>Define the culture and feel of the classroom</li>
+          <li>Vary between classrooms, subjects, and teachers</li>
+          <li>Taught and reinforced until they are simply "how we do things here"</li>
+          <li>Free students to focus on learning, not logistics</li>
+        </ul>
+        <div class="col-note">Routines are not responses to student needs — they are the recurring shape of your classroom. They should be chosen with intention.</div>
+      </div>
+
+    </div>
+
+    <!-- THESIS -->
+    <div class="thesis-box">
+      <div class="thesis-text">"The goal of all admonishment is restoration to fellowship."</div>
+      <div class="thesis-attr">The foundation of the discipleship and discipline framework</div>
+    </div>
+
+    <!-- TWO COL -->
+    <div style="margin-bottom:8px">
+      <span class="section-title">The Framework in Practice</span>
+    </div>
+    <p class="section-intro">Discipline and discipleship are not opposites — they are two sides of the same commitment to the student. Everything flows from love and returns to fellowship.</p>
+
+    <div class="two-col">
+
+      <!-- FIVE STEPS -->
+      <div>
+        <div class="five-steps">
+          <div class="step foundation">
+            <div class="step-num">★</div>
+            <div class="step-content">
+              <div class="step-name">Culture of Love & Mutual Respect</div>
+              <div class="step-desc">Everything begins and ends here. The teacher genuinely wants every student to succeed. This is not a technique — it is the foundation the entire framework rests on.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-name">Teach</div>
+              <div class="step-desc">Instruct students clearly on rules, procedures, and expectations. State them, explain them, model them. Never assume students know what you have not explicitly taught.</div>
+              <div class="step-scripture">Psalm 34:11 — "Come, children, listen to me; I will teach you the fear of the Lord."</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-name">Train</div>
+              <div class="step-desc">Practice the procedure until it becomes routine. Use roleplay, scenarios, and repetition. Behaviors must be rehearsed — not just explained — to become habits.</div>
+              <div class="step-scripture">Ephesians 6:4 — "Bring them up in the training and instruction of the Lord."</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-name">Admonish</div>
+              <div class="step-desc">When disobedience occurs, correct gently and clearly. The expectation was taught, so the correction is fair. Admonish without contempt — the student's dignity must remain intact.</div>
+              <div class="step-scripture">Galatians 6:1 — "Restore them gently."</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-name">Seek Support</div>
+              <div class="step-desc">When admonishment is insufficient, involve administration and families. You do not manage this alone. The school community supports the teacher in maintaining a well-ordered classroom.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-name">Restore</div>
+              <div class="step-desc">The goal was never punishment — it was always restoration. Restore the student to fellowship with the teacher, the class, and the community. Then return to the positive cycle.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div style="display:flex; flex-direction:column; gap:20px;">
+
+        <!-- Teaching Method -->
+        <div class="method-box">
+          <div class="method-title">How to Teach a Procedure</div>
+          <div class="method-step">
+            <div class="method-num">1</div>
+            <div>
+              <span class="method-label">Explain</span>
+              <span class="method-desc">State the procedure clearly. Model it. Show students exactly what it looks like when done correctly. Explain why it matters.</span>
+            </div>
+          </div>
+          <div class="method-step">
+            <div class="method-num">2</div>
+            <div>
+              <span class="method-label">Rehearse</span>
+              <span class="method-desc">Practice it together under your supervision. Correct and redirect. Do not move on until students can do it correctly.</span>
+            </div>
+          </div>
+          <div class="method-step">
+            <div class="method-num">3</div>
+            <div>
+              <span class="method-label">Reinforce</span>
+              <span class="method-desc">Reteach, practice again, and affirm correct behavior. Repeat until the procedure becomes automatic — until it becomes a routine.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cycle -->
+        <div class="cycle-box">
+          <div class="cycle-title">The Classroom Cycle</div>
+          <div class="cycle-flow">
+            <div class="cycle-item positive">
+              <div class="cycle-dot">♥</div>
+              <span>Teacher loves and builds relationships with students</span>
+            </div>
+            <div class="cycle-arrow">↓</div>
+            <div class="cycle-item positive">
+              <div class="cycle-dot">T</div>
+              <span>Teacher teaches rules, procedures, and expectations</span>
+            </div>
+            <div class="cycle-arrow">↓</div>
+            <div class="cycle-item positive">
+              <div class="cycle-dot">Tr</div>
+              <span>Teacher trains students through practice and repetition</span>
+            </div>
+            <div class="cycle-arrow">↓ &nbsp;<em style="font-size:12px;color:var(--gold-text)">when disobedience occurs</em></div>
+            <div class="cycle-item discipline">
+              <div class="cycle-dot" style="background:var(--gold-text)">A</div>
+              <span>Teacher admonishes gently — dignity intact</span>
+            </div>
+            <div class="cycle-arrow">↓</div>
+            <div class="cycle-item discipline">
+              <div class="cycle-dot" style="background:var(--gold-text)">S</div>
+              <span>Support sought from admin and families as needed</span>
+            </div>
+            <div class="cycle-arrow">↓</div>
+            <div class="cycle-item positive">
+              <div class="cycle-dot" style="background:#4a7a40">R</div>
+              <span><strong>Restore</strong> — always the goal. Return to fellowship.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PROCEDURES TO ESTABLISH -->
+    <div style="margin-bottom:8px">
+      <span class="section-title">Procedures Every Teacher Should Establish</span>
+    </div>
+    <p class="section-intro">Before students arrive, identify and prepare to teach a procedure for each recurring student need. If you have not taught the procedure, you cannot hold students accountable for not following it.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:32px;">
+      <div style="background:var(--off-white); border:1px solid var(--rule); border-radius:4px; padding:14px 16px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; color:var(--navy); margin-bottom:8px;">Entering the Classroom</div>
+        <div style="font-size:13px; color:var(--ink-light); line-height:1.55;">What do students do the moment they walk in? Where do they go? What do they begin? This sets the tone for the entire class period.</div>
+      </div>
+      <div style="background:var(--off-white); border:1px solid var(--rule); border-radius:4px; padding:14px 16px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; color:var(--navy); margin-bottom:8px;">Getting the Teacher's Attention</div>
+        <div style="font-size:13px; color:var(--ink-light); line-height:1.55;">How does a student signal they need help without disrupting the class? Raised hand, a card on the desk, waiting quietly — teach it explicitly.</div>
+      </div>
+      <div style="background:var(--off-white); border:1px solid var(--rule); border-radius:4px; padding:14px 16px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; color:var(--navy); margin-bottom:8px;">Handing In Work</div>
+        <div style="font-size:13px; color:var(--ink-light); line-height:1.55;">Where does work go? When? In what form? A clear procedure here eliminates dozens of interruptions and questions over the course of a year.</div>
+      </div>
+      <div style="background:var(--off-white); border:1px solid var(--rule); border-radius:4px; padding:14px 16px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; color:var(--navy); margin-bottom:8px;">Student Needs During Class</div>
+        <div style="font-size:13px; color:var(--ink-light); line-height:1.55;">Getting a Kleenex, throwing something away, sharpening a pencil, asking to use the restroom — each needs a clear, quiet procedure so learning is not interrupted.</div>
+      </div>
+      <div style="background:var(--off-white); border:1px solid var(--rule); border-radius:4px; padding:14px 16px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; color:var(--navy); margin-bottom:8px;">Returning After Absence</div>
+        <div style="font-size:13px; color:var(--ink-light); line-height:1.55;">How does a student get what they missed? Where do they look? Who do they ask first? A procedure puts the responsibility on the student, not the teacher.</div>
+      </div>
+      <div style="background:var(--off-white); border:1px solid var(--rule); border-radius:4px; padding:14px 16px;">
+        <div style="font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:700; color:var(--navy); margin-bottom:8px;">Dismissal</div>
+        <div style="font-size:13px; color:var(--ink-light); line-height:1.55;">How does class end? What must be done before students leave? The teacher — not the bell — dismisses the class. Teach this from day one.</div>
+      </div>
+    </div>
+
+    <!-- ROUTINES -->
+    <div style="margin-bottom:8px">
+      <span class="section-title">Routines to Consider Building</span>
+    </div>
+    <p class="section-intro">Routines are not responses to student needs — they are the intentional rhythms that shape your classroom culture. They vary between teachers, subjects, and grade levels. The examples below are starting points, not prescriptions. Choose routines that reflect your values and your students.</p>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
+
+      <div style="border:1px solid var(--rule); border-radius:4px; overflow:hidden;">
+        <div style="background:var(--navy); padding:10px 14px;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:700; color:var(--gold);">Opening Routines</div>
+        </div>
+        <div style="padding:14px 16px; background:var(--off-white);">
+          <ul class="col-list">
+            <li>Bible reading or devotional to open class</li>
+            <li>Memory recitation — Scripture, poetry, Latin paradigm</li>
+            <li>A posted warm-up students begin immediately upon entering</li>
+            <li>Prayer before instruction begins</li>
+            <li>A brief review of the previous lesson</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--rule); border-radius:4px; overflow:hidden;">
+        <div style="background:var(--navy); padding:10px 14px;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:700; color:var(--gold);">Class Rhythms</div>
+        </div>
+        <div style="padding:14px 16px; background:var(--off-white);">
+          <ul class="col-list">
+            <li>How discussion is opened and closed</li>
+            <li>How the teacher signals a shift in activity</li>
+            <li>Standing when a visitor enters the room</li>
+            <li>How students participate — when to speak, when to listen</li>
+            <li>How the class handles disagreement or debate</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--rule); border-radius:4px; overflow:hidden;">
+        <div style="background:var(--navy); padding:10px 14px;">
+          <div style="font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:700; color:var(--gold);">Closing Routines</div>
+        </div>
+        <div style="padding:14px 16px; background:var(--off-white);">
+          <ul class="col-list">
+            <li>A summary question — "what did we learn today?"</li>
+            <li>Time for students to write down assignments</li>
+            <li>A closing prayer or benediction</li>
+            <li>A consistent dismissal signal and process</li>
+            <li>A moment of reflection before leaving</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="background:var(--gold-pale); border:1px solid var(--gold); border-radius:4px; padding:14px 18px; margin-bottom:8px;">
+      <div style="font-size:14px; color:var(--gold-text); line-height:1.65; font-style:italic;">
+        <strong style="font-style:normal; color:var(--navy);">Remember:</strong> A routine that exists only in the teacher's head is not yet a routine. It becomes one when students can do it without being told.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer">
+    <span class="footer-note">For internal professional development use only</span>
+    <span class="footer-ref">¹ Concepts of rules, procedures, and routines informed by H.K. Wong & R.T. Wong, <em>The First Days of School</em> (Harry K. Wong Publications). Discipleship and Discipline framework original to Scott Welch.</span>
+    <span style="font-size:10px; color:#555; margin-top:4px; display:block; text-align:right;">© 2025 Scott Welch</span>
+  </div>
+
+</div>
+</body>
+</html>
