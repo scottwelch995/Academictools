@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>HCCSA — Classroom Environment, Opening & Closing</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:      #1a2e4a;
+  --navy-dark: #0f1d30;
+  --gold:      #c8a84b;
+  --gold-pale: #fdf6e3;
+  --gold-text: #7a6010;
+  --white:     #ffffff;
+  --off-white: #f8f7f4;
+  --rule:      #e0d8cc;
+  --ink:       #1c1c1a;
+  --ink-light: #3a3830;
+  --green-bg:  #eef6ec;
+  --green-bd:  #7aaa72;
+  --red-bg:    #fdf0ef;
+  --red-bd:    #cc8880;
+  --warn-bg:   #fff8ec;
+  --warn-bd:   #d4a030;
+  --radius:    9px;
+}
+body { font-family: Georgia,'Times New Roman',serif; background:var(--off-white); color:var(--ink); min-height:100vh; -webkit-text-size-adjust:100%; }
+
+#topbar { background:var(--navy-dark); padding:11px 18px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+#topbar .tag { color:rgba(255,255,255,0.7); font-size:13px; letter-spacing:1px; text-transform:uppercase; }
+
+#page { max-width:1100px; margin:0 auto; padding:20px 20px 80px; }
+@media(max-width:1024px){ #page { max-width:960px; padding:16px 16px 80px; } }
+@media(max-width:600px){  #page { max-width:100%; padding:12px 12px 80px; } }
+
+.card { background:var(--white); border-radius:14px; border:1px solid var(--rule); overflow:hidden; box-shadow:0 3px 24px rgba(0,0,0,0.07); margin-bottom:16px; }
+.card-header { background:var(--navy); padding:18px 20px; }
+.header-eyebrow { font-size:13px; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:5px; }
+.header-title { font-size:24px; color:var(--white); font-weight:bold; line-height:1.2; }
+.header-sub { font-size:15px; color:rgba(255,255,255,0.8); margin-top:5px; line-height:1.4; }
+.card-body { padding:18px 20px; display:flex; flex-direction:column; gap:20px; }
+
+.framework-badge { background:var(--navy); border-radius:var(--radius); padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+.badge-row { display:flex; gap:8px; align-items:flex-start; }
+.badge-pill { font-size:12px; color:var(--navy); background:var(--gold); border-radius:20px; padding:4px 11px; font-weight:bold; letter-spacing:0.5px; text-transform:uppercase; white-space:nowrap; flex-shrink:0; margin-top:1px; }
+.badge-items { font-size:15px; color:rgba(255,255,255,0.95); line-height:1.6; }
+
+.focus-box { background:var(--gold-pale); border-left:3px solid var(--gold); border-radius:0 var(--radius) var(--radius) 0; padding:13px 15px; }
+.focus-statement { font-size:16px; color:var(--ink); line-height:1.65; margin-bottom:12px; }
+.lookfor-header { font-size:13px; color:var(--gold-text); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; padding-top:10px; border-top:1px solid #e5d090; font-weight:bold; }
+.lookfor-row { display:flex; gap:8px; margin-bottom:5px; align-items:flex-start; }
+.lookfor-arrow { color:var(--gold); font-size:13px; margin-top:3px; flex-shrink:0; }
+.lookfor-text { font-size:15px; color:var(--ink); line-height:1.5; }
+
+.section-label { font-size:13px; color:var(--ink-light); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:10px; font-weight:bold; }
+.section-note { font-size:15px; color:var(--ink-light); font-style:italic; margin-bottom:14px; line-height:1.6; }
+
+.meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media(max-width:500px){ .meta-grid { grid-template-columns:1fr; } }
+.meta-field label { display:block; font-size:13px; color:var(--ink-light); margin-bottom:4px; }
+.meta-field input { width:100%; padding:9px 11px; border:1px solid var(--rule); border-radius:7px; font-family:Georgia,serif; font-size:16px; background:var(--off-white); color:var(--ink); outline:none; -webkit-appearance:none; }
+.meta-field input:focus { border-color:var(--navy); }
+.meta-full { grid-column:1/-1; }
+
+.presence-question { border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; margin-bottom:12px; }
+.presence-label { padding:14px 16px; background:var(--off-white); }
+.presence-title { font-size:16px; color:var(--ink); font-weight:bold; margin-bottom:3px; }
+.presence-desc { font-size:13px; color:var(--ink-light); font-style:italic; }
+.presence-btns { display:flex; border-top:1px solid var(--rule); }
+.presence-btn { flex:1; padding:12px 6px; border:none; font-family:Georgia,serif; font-size:15px; color:var(--ink-light); cursor:pointer; text-align:center; transition:all 0.15s; -webkit-tap-highlight-color:transparent; background:var(--off-white); }
+.presence-btn:first-child { border-right:1px solid var(--rule); }
+.presence-btn.active-yes { background:var(--green-bg); color:#2a6a20; font-weight:bold; }
+.presence-btn.active-no  { background:#efefef; color:#555; font-weight:bold; }
+
+.obs-section { display:none; }
+.obs-section.show { display:block; }
+
+.ynn-item { border:1px solid var(--rule); border-radius:var(--radius); overflow:hidden; margin-bottom:10px; background:var(--off-white); }
+.ynn-label-row { padding:12px 13px 8px; }
+.ynn-main-label { font-size:16px; color:var(--ink); line-height:1.5; margin-bottom:3px; }
+.ynn-examples { font-size:13px; color:var(--ink-light); font-style:italic; line-height:1.5; }
+.ynn-btns { display:flex; border-top:1px solid var(--rule); }
+.ynn-btn { flex:1; padding:11px 6px; border:none; border-right:1px solid var(--rule); background:var(--off-white); font-family:Georgia,serif; font-size:15px; color:var(--ink-light); cursor:pointer; text-align:center; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
+.ynn-btn:last-child { border-right:none; }
+.ynn-btn.yes-on { background:var(--green-bg); color:#2a6a20; font-weight:bold; }
+.ynn-btn.no-on  { background:var(--red-bg); color:#8a2020; font-weight:bold; }
+.ynn-btn.na-on  { background:#efefef; color:#555; font-weight:bold; }
+.ynn-ev { padding:10px 13px 12px; background:var(--white); display:none; border-top:1px solid var(--rule); }
+.ynn-ev.open { display:block; }
+.ynn-ev label { font-size:13px; color:var(--ink-light); text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px; font-weight:bold; }
+.ynn-ev textarea { width:100%; padding:9px 11px; border:1px solid var(--rule); border-radius:7px; font-family:Georgia,serif; font-size:15px; background:var(--off-white); color:var(--ink); resize:none; outline:none; line-height:1.6; min-height:60px; -webkit-appearance:none; }
+
+.narrative-prompt { font-size:15px; color:var(--gold-text); font-style:italic; margin-bottom:9px; line-height:1.55; }
+.narrative-ta { width:100%; padding:12px; border:1px solid var(--rule); border-radius:var(--radius); font-family:Georgia,serif; font-size:16px; background:var(--off-white); color:var(--ink); resize:vertical; outline:none; line-height:1.7; min-height:100px; -webkit-appearance:none; }
+
+.rating-note { font-size:14px; color:var(--ink-light); font-style:italic; margin-bottom:11px; }
+.rating-row { display:flex; gap:9px; }
+.rating-btn { flex:1; padding:13px 6px; border-radius:var(--radius); border:2px solid var(--rule); background:var(--off-white); font-family:Georgia,serif; font-size:15px; color:var(--ink-light); cursor:pointer; text-align:center; transition:all 0.15s; -webkit-tap-highlight-color:transparent; }
+.rating-btn.strong     { border-color:#4a8a40; background:var(--green-bg); color:#2a6a20; font-weight:bold; }
+.rating-btn.developing { border-color:#b8860b; background:var(--warn-bg); color:#7a5800; font-weight:bold; }
+.rating-btn.needs      { border-color:#b84040; background:var(--red-bg); color:#8a2020; font-weight:bold; }
+
+.coaching-box { background:var(--navy); border-radius:var(--radius); padding:16px 18px; }
+.coaching-label { font-size:13px; color:var(--gold); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; font-weight:bold; }
+.coaching-q { font-size:15px; color:var(--white); line-height:1.65; font-style:italic; }
+
+.action-row { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; padding-top:4px; align-items:flex-start; }
+.action-col { display:flex; flex-direction:column; align-items:center; gap:10px; flex:1; min-width:160px; max-width:280px; }
+.action-btn { padding:13px 22px; border-radius:8px; font-family:Georgia,serif; font-size:16px; cursor:pointer; border:none; transition:all 0.15s; min-width:160px; text-align:center; width:100%; }
+.btn-clear { background:var(--off-white); border:1px solid var(--rule) !important; color:var(--ink-light); }
+.btn-pdf   { background:var(--gold); color:var(--navy); font-weight:bold; }
+.action-hint { font-size:13px; color:var(--ink-light); line-height:1.55; text-align:center; font-style:italic; }
+
+@media print {
+  * { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+  body { background:white; }
+  #topbar, .action-row { display:none !important; }
+  #page { padding:0; max-width:100%; }
+  .card { box-shadow:none; border:1px solid #ccc; margin-bottom:12px; page-break-inside:avoid; }
+  .ynn-ev { display:block !important; }
+  .obs-section { display:block !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <span class="tag">Internal Observer Tool · Not Shared With Teachers</span>
+</div>
+
+<div id="page">
+
+  <!-- HEADER -->
+  <div class="card">
+    <div class="card-header">
+      <div class="header-eyebrow">Drop-In Observation · Internal Only</div>
+      <div class="header-title">Classroom Environment, Opening & Closing</div>
+      <div class="header-sub">Does the room set students up for learning — and does the teacher begin and end class with intention?</div>
+    </div>
+    <div class="card-body">
+
+      <div class="framework-badge">
+        <div class="badge-row">
+          <span class="badge-pill">CTEs</span>
+          <span class="badge-items">Classroom Culture — Physical Environment · Engagement · Instructional Practice — Planning & Preparation</span>
+        </div>
+        <div class="badge-row">
+          <span class="badge-pill">Dispositions</span>
+          <span class="badge-items">Conscientiousness · Consistency · Gravitas</span>
+        </div>
+        <div class="badge-row">
+          <span class="badge-pill">Seven Laws</span>
+          <span class="badge-items">Law 1 — The Law of the Teacher: the teacher must be thoroughly prepared · Law 7 — The Law of Review and Application: learning is consolidated through review at the opening and closing of class</span>
+        </div>
+        <div class="badge-row">
+          <span class="badge-pill">Christian</span>
+          <span class="badge-items">Faith visible in daily classroom rhythms — prayer, Scripture, and devotion as the foundation of the school day, not an afterthought</span>
+        </div>
+      </div>
+
+      <div class="focus-box">
+        <div class="section-label" style="color:var(--gold-text)">Observer Focus</div>
+        <div class="focus-statement">A well-managed classroom begins before the teacher speaks. The room itself communicates expectations. How class opens and closes reveals whether the teacher is leading with intention — or reacting.</div>
+        <div class="lookfor-header">Specific Look-Fors</div>
+        <div class="lookfor-row"><span class="lookfor-arrow">▸</span><span class="lookfor-text">Does the room's arrangement promote attention and focus — or invite distraction?</span></div>
+        <div class="lookfor-row"><span class="lookfor-arrow">▸</span><span class="lookfor-text">Is technology serving the lesson — or doing the lesson for the teacher?</span></div>
+        <div class="lookfor-row"><span class="lookfor-arrow">▸</span><span class="lookfor-text">Did class begin with faith, intention, and a task — or did it drift into existence?</span></div>
+        <div class="lookfor-row"><span class="lookfor-arrow">▸</span><span class="lookfor-text">Did class end with review and intention — or did the bell dismiss the students?</span></div>
+      </div>
+
+      <div>
+        <div class="section-label">Observation Details</div>
+        <div class="meta-grid">
+          <div class="meta-field"><label>Teacher</label><input type="text" placeholder="Last name, First"></div>
+          <div class="meta-field"><label>Observer</label><input type="text" placeholder="Your name"></div>
+          <div class="meta-field"><label>Subject / Class</label><input type="text" placeholder="e.g. Rhetoric, Logic"></div>
+          <div class="meta-field"><label>Date</label><input type="date"></div>
+          <div class="meta-field"><label>Arrival Time</label><input type="time"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">What Did You Observe?</div>
+        <p class="section-note">Answer both questions. Environment and Technology are always shown. Opening and Closing sections appear based on your answers.</p>
+
+        <div class="presence-question">
+          <div class="presence-label">
+            <div class="presence-title">Were you present for the opening of class?</div>
+            <div class="presence-desc">The first few minutes — greeting, prayer, Bible reading, opening task</div>
+          </div>
+          <div class="presence-btns">
+            <button class="presence-btn" id="op-yes" onclick="setPresence('opening','yes')">Yes</button>
+            <button class="presence-btn" id="op-no"  onclick="setPresence('opening','no')">No</button>
+          </div>
+        </div>
+
+        <div class="presence-question">
+          <div class="presence-label">
+            <div class="presence-title">Were you present for the closing of class?</div>
+            <div class="presence-desc">The final few minutes — review, homework, closing prayer or ritual, dismissal</div>
+          </div>
+          <div class="presence-btns">
+            <button class="presence-btn" id="cl-yes" onclick="setPresence('closing','yes')">Yes</button>
+            <button class="presence-btn" id="cl-no"  onclick="setPresence('closing','no')">No</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ENVIRONMENT — always shown once any answer given -->
+  <div class="card obs-section" id="sec-env">
+    <div class="card-body">
+      <div class="section-label">Physical Environment</div>
+      <p class="section-note">Observable any time regardless of when you arrive. These items reflect choices the teacher made before students walked in.</p>
+
+      <div class="ynn-item" id="e1">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">The seating arrangement promotes attention and engagement</div>
+          <div class="ynn-examples">Consider: can students see the teacher and board clearly? Does the arrangement encourage focus — or make side conversation easy and natural?</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('e1','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('e1','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('e1','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="e1-ev"><label id="e1-lb">Evidence</label><textarea id="e1-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="e2">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Students have an assigned seating chart that appears intentional</div>
+          <div class="ynn-examples">Examples: students go directly to assigned seats, the arrangement appears purposeful rather than student-chosen</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('e2','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('e2','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('e2','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="e2-ev"><label id="e2-lb">Evidence</label><textarea id="e2-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="e3">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">The room is orderly and prepared — it communicates that learning is serious and valued here</div>
+          <div class="ynn-examples">Examples: materials organized, board is intentional and current, the room feels like a place where important work happens</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('e3','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('e3','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('e3','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="e3-ev"><label id="e3-lb">Evidence</label><textarea id="e3-ta" rows="2"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TECHNOLOGY — always shown once any answer given -->
+  <div class="card obs-section" id="sec-tech">
+    <div class="card-body">
+      <div class="section-label">Use of Technology</div>
+      <p class="section-note">The question is not whether technology was used — but whether it served the learning, or shifted intellectual work away from students and onto a screen.</p>
+
+      <div class="ynn-item" id="t1">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Teacher use of technology supported rather than replaced direct instruction</div>
+          <div class="ynn-examples">Supporting: a map displayed for reference, a primary source projected for discussion. Replacing: reading slides aloud word for word, playing a video as the primary lesson, navigating away from content while students wait</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('t1','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('t1','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('t1','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="t1-ev"><label id="t1-lb">Evidence</label><textarea id="t1-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="t2">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">The technology used was the most effective tool for this moment</div>
+          <div class="ynn-examples">A smartboard showing notes students passively read would be more effective as a handout. Slides students copy would be more engaging built live on the whiteboard with student input. Ask: did students engage with content — or watch a screen?</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('t2','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('t2','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('t2','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="t2-ev"><label id="t2-lb">Evidence</label><textarea id="t2-ta" rows="2"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPENING — shown only if present for opening -->
+  <div class="card obs-section" id="sec-opening">
+    <div class="card-body">
+      <div class="section-label">Class Opening</div>
+      <p class="section-note">How a teacher opens class reveals whether they are leading with intention — and whether their faith is visible in the daily rhythm of their classroom.</p>
+
+      <div class="ynn-item" id="o1">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Teacher greeted students at the door or as they entered</div>
+          <div class="ynn-examples">Examples: standing at the door, making eye contact, using student names, noticing the mood or energy students brought with them</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('o1','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('o1','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('o1','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="o1-ev"><label id="o1-lb">Evidence</label><textarea id="o1-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="o2">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Class began with prayer, Bible reading, or a devotional opening</div>
+          <div class="ynn-examples">Examples: teacher or student led prayer, a Scripture passage read aloud, a brief devotional — the faith foundation of the school day was made visible in this classroom</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('o2','yes',1,0)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('o2','no',0,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('o2','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="o2-ev"><label id="o2-lb">Evidence</label><textarea id="o2-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="o3">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Teacher had something for students to do as they arrived</div>
+          <div class="ynn-examples">Examples: a warm-up on the board, a question to think about, materials to retrieve and begin — students were productive from the moment they sat down</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('o3','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('o3','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('o3','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="o3-ev"><label id="o3-lb">Evidence</label><textarea id="o3-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="o4">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Teacher read the room as students arrived — noticing energy, attitudes, and who needed attention</div>
+          <div class="ynn-examples">Examples: adjusted approach based on what they observed, noticed a student who seemed off, greeted a student warmly who looked disengaged</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('o4','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('o4','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('o4','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="o4-ev"><label id="o4-lb">Evidence</label><textarea id="o4-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="o5">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Teacher connected the opening to prior learning — a brief review before new content began</div>
+          <div class="ynn-examples">Examples: warm-up question referencing yesterday's lesson, a quick oral review, asking students to recall a key concept — Law 7: learning is consolidated through review</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('o5','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('o5','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('o5','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="o5-ev"><label id="o5-lb">Evidence</label><textarea id="o5-ta" rows="2"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING — shown only if present for closing -->
+  <div class="card obs-section" id="sec-closing">
+    <div class="card-body">
+      <div class="section-label">Class Closing</div>
+      <p class="section-note">How a teacher closes class reveals whether the lesson had a destination — and whether the teacher or the bell is in charge of the room.</p>
+
+      <div class="ynn-item" id="c1">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Teacher used the closing to review or consolidate what was learned</div>
+          <div class="ynn-examples">Examples: asked students to summarize the key idea, gave a brief review question, connected today's lesson to what comes next — Law 7: the closing is the final opportunity to seal what was taught</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('c1','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('c1','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('c1','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="c1-ev"><label id="c1-lb">Evidence</label><textarea id="c1-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="c2">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Homework or closing assignment was communicated clearly and appeared prepared in advance</div>
+          <div class="ynn-examples">Prepared: written on the board, explained clearly, students knew exactly what was required. Improvised: teacher appeared to create it on the spot, instructions were vague or changed mid-explanation</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('c2','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('c2','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('c2','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="c2-ev"><label id="c2-lb">Evidence</label><textarea id="c2-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="c3">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">Class ended with intention — a closing prayer, ritual, or clear signal from the teacher</div>
+          <div class="ynn-examples">Examples: closing prayer, a moment of reflection, a consistent dismissal signal — the teacher dismissed the class, not the bell</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('c3','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('c3','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('c3','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="c3-ev"><label id="c3-lb">Evidence</label><textarea id="c3-ta" rows="2"></textarea></div>
+      </div>
+
+      <div class="ynn-item" id="c4">
+        <div class="ynn-label-row">
+          <div class="ynn-main-label">⚠ The bell dismissed the class — not the teacher</div>
+          <div class="ynn-examples">Students began packing up or moving before the teacher gave a dismissal signal — the teacher lost the closing moment to the clock</div>
+        </div>
+        <div class="ynn-btns">
+          <button class="ynn-btn" onclick="ynn('c4','yes',1,1)">Yes</button>
+          <button class="ynn-btn" onclick="ynn('c4','no',1,1)">No</button>
+          <button class="ynn-btn" onclick="ynn('c4','na',0,0)">Not Observable</button>
+        </div>
+        <div class="ynn-ev" id="c4-ev"><label id="c4-lb">Evidence</label><textarea id="c4-ta" rows="2"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY — always shown once any answer given -->
+  <div class="card obs-section" id="sec-summary">
+    <div class="card-body">
+
+      <div>
+        <div class="section-label">Most Important Observation</div>
+        <div class="narrative-prompt">What did the physical environment, the opening, or the closing reveal about this teacher's level of intentionality and preparation?</div>
+        <textarea class="narrative-ta" rows="5" placeholder="Be specific — describe what you saw, name the moment, quote the teacher if relevant..."></textarea>
+      </div>
+
+      <div>
+        <div class="section-label">Overall Impression</div>
+        <div class="rating-note">Your honest read — not a final evaluation. This informs your coaching conversation, not the teacher's file.</div>
+        <div class="rating-row">
+          <button class="rating-btn" onclick="rate(this,'strong')">Strong</button>
+          <button class="rating-btn" onclick="rate(this,'developing')">Developing</button>
+          <button class="rating-btn" onclick="rate(this,'needs')">Needs Attention</button>
+        </div>
+        <div id="rating-notes" style="display:none;margin-top:14px;">
+          <label style="font-size:13px;color:var(--ink-light);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;font-weight:bold;">Observer Notes</label>
+          <textarea class="narrative-ta" rows="4" placeholder="Summarize your overall impression or add anything that didn't fit elsewhere..."></textarea>
+        </div>
+      </div>
+
+      <div class="coaching-box">
+        <div class="coaching-label">Debrief Coaching Question</div>
+        <div class="coaching-q">"Walk me through how you set up your classroom and how you open and close class. What is intentional — and what is still developing?"</div>
+      </div>
+
+      <div class="action-row">
+        <div class="action-col">
+          <button class="action-btn btn-clear" onclick="clearAll()">Clear Form</button>
+          <p class="action-hint">Wipes all entries and resets the form. You will be asked to confirm before anything is deleted.</p>
+        </div>
+        <div class="action-col">
+          <button class="action-btn btn-pdf" onclick="savePDF()">Save as PDF / Print</button>
+          <p class="action-hint">
+            <strong>To save as PDF —</strong><br>
+            <strong>Mac:</strong> PDF button bottom left of print dialog → Save as PDF → teacher's folder in Google Drive.<br>
+            <strong>iPhone / iPad:</strong> Pinch outward on page preview → Share icon → Save to Files or Google Drive.<br><br>
+            <strong>To print —</strong> Select printer and tap Print.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+var P = { opening: null, closing: null };
+
+var cfg = {
+  e1:{ yes:{l:'Evidence — what about the arrangement works well?',p:'Describe the layout and why it promotes attention...'},
+       no: {l:'What discourages attention?',p:'Describe what you observed and what might work better...'} },
+  e2:{ yes:{l:'Evidence — how did you observe this?',p:'Describe how seating appeared assigned...'},
+       no: {l:'What did you observe instead?',p:'Did students choose their own seats?'} },
+  e3:{ yes:{l:'Evidence — what made the room feel prepared?',p:'Specific details that communicated readiness...'},
+       no: {l:'What was missing or disorganized?',p:'Be specific...'} },
+  t1:{ yes:{l:'Evidence — how did technology support instruction?',p:'What was displayed and how did it serve the lesson?'},
+       no: {l:'What did you observe instead?',p:'How did technology replace rather than support direct instruction?'} },
+  t2:{ yes:{l:'Evidence — why was this the right tool?',p:'What did the technology do that a handout or whiteboard could not?'},
+       no: {l:'What would have been more effective?',p:'Would a handout or whiteboard have put more work in student hands?'} },
+  o1:{ yes:{l:'Evidence — what did the greeting look like?',p:'Describe what the teacher said or did as students entered...'},
+       no: {l:'What did you observe instead?',p:'Where was the teacher? What was happening as students arrived?'} },
+  o2:{ yes:{l:'Evidence — what was the faith opening?',p:'Describe the prayer, reading, or devotional...'},
+       no: {l:'How did class begin instead?',p:'How did the teacher open class?'} },
+  o3:{ yes:{l:'Evidence — what was the opening task?',p:'Describe what students were doing as they arrived...'},
+       no: {l:'What did you observe instead?',p:'What were students doing as they arrived?'} },
+  o4:{ yes:{l:'Evidence — what did you observe?',p:'Describe a moment where the teacher responded to what they noticed...'},
+       no: {l:'What did you observe instead?',p:'Did the teacher seem unaware of the room\'s energy?'} },
+  o5:{ yes:{l:'Evidence — how was prior learning connected?',p:'Describe the review or connection to previous content...'},
+       no: {l:'What did you observe instead?',p:'Did the teacher move directly into new content without review?'} },
+  c1:{ yes:{l:'Evidence — how did the teacher use the closing for review?',p:'Describe the summary question or consolidation activity...'},
+       no: {l:'What did you observe instead?',p:'Did class end without consolidating what was learned?'} },
+  c2:{ yes:{l:'Evidence — how was the assignment communicated?',p:'Was it on the board? Explained clearly?'},
+       no: {l:'What did you observe instead?',p:'Did the assignment seem improvised? Were students unclear?'} },
+  c3:{ yes:{l:'Evidence — what was the closing ritual?',p:'Describe how class ended — prayer, summary, signal...'},
+       no: {l:'What did you observe instead?',p:'How did class end? Who or what signaled the end?'} },
+  c4:{ yes:{l:'Note — what happened?',p:'When did students begin packing up? What was the teacher doing?'},
+       no: {l:'Evidence — how did the teacher dismiss class?',p:'Describe the teacher\'s closing signal...'} }
+};
+
+function setPresence(type, val) {
+  var yBtn = document.getElementById(type === 'opening' ? 'op-yes' : 'cl-yes');
+  var nBtn = document.getElementById(type === 'opening' ? 'op-no'  : 'cl-no');
+
+  if (P[type] === val) {
+    P[type] = null;
+    yBtn.className = 'presence-btn';
+    nBtn.className = 'presence-btn';
+  } else {
+    P[type] = val;
+    yBtn.className = 'presence-btn' + (val === 'yes' ? ' active-yes' : '');
+    nBtn.className = 'presence-btn' + (val === 'no'  ? ' active-no'  : '');
+  }
+  refresh();
+}
+
+function refresh() {
+  var any = P.opening !== null || P.closing !== null;
+  toggle('sec-env',     any);
+  toggle('sec-tech',    any);
+  toggle('sec-opening', P.opening === 'yes');
+  toggle('sec-closing', P.closing === 'yes');
+  toggle('sec-summary', any);
+}
+
+function toggle(id, show) {
+  var el = document.getElementById(id);
+  if (show) { el.classList.add('show'); } else { el.classList.remove('show'); }
+}
+
+function ynn(id, type, openY, openN) {
+  var item = document.getElementById(id);
+  var btns = item.querySelectorAll('.ynn-btn');
+  var idx  = type==='yes'?0:type==='no'?1:2;
+  var was  = btns[idx].classList.contains(type+'-on');
+  btns.forEach(function(b){ b.className='ynn-btn'; });
+  var ev = document.getElementById(id+'-ev');
+  if (was) { if(ev) ev.classList.remove('open'); return; }
+  btns[idx].classList.add(type+'-on');
+  if (!ev) return;
+  var shouldOpen = (type==='yes'&&openY)||(type==='no'&&openN);
+  if (shouldOpen) { ev.classList.add('open'); } else { ev.classList.remove('open'); }
+  var lb = document.getElementById(id+'-lb');
+  var ta = document.getElementById(id+'-ta');
+  var c  = cfg[id];
+  if (lb && ta && c && c[type]) { lb.textContent = c[type].l; ta.placeholder = c[type].p; }
+}
+
+function rate(btn, type) {
+  var was = btn.classList.contains(type);
+  document.querySelectorAll('.rating-btn').forEach(function(b){ b.className='rating-btn'; b.textContent=b.textContent.replace('✓ ',''); });
+  var nb = document.getElementById('rating-notes');
+  if (was) { nb.style.display='none'; return; }
+  btn.classList.add(type);
+  btn.textContent = '✓ ' + btn.textContent;
+  nb.style.display = 'block';
+}
+
+function savePDF() {
+  var t = document.querySelector('input[placeholder="Last name, First"]').value.trim() || 'Observation';
+  var d = document.querySelector('input[type=date]').value || new Date().toISOString().split('T')[0];
+  document.querySelectorAll('.ynn-ev').forEach(function(e){ e.dataset.w=e.classList.contains('open'); e.classList.add('open'); });
+  var ot = document.title;
+  document.title = t + ' — Environment Opening Closing — ' + d;
+  window.print();
+  setTimeout(function(){
+    document.title = ot;
+    document.querySelectorAll('.ynn-ev').forEach(function(e){ if(!e.dataset.w||e.dataset.w==='false') e.classList.remove('open'); delete e.dataset.w; });
+  }, 1000);
+}
+
+function clearAll() {
+  if (!confirm('Clear this entire form? This cannot be undone.')) return;
+  document.querySelectorAll('input[type=text],input[type=date],input[type=time],textarea').forEach(function(el){ el.value=''; });
+  document.querySelectorAll('.ynn-btn').forEach(function(b){ b.className='ynn-btn'; });
+  document.querySelectorAll('.ynn-ev').forEach(function(e){ e.classList.remove('open'); });
+  document.querySelectorAll('.rating-btn').forEach(function(b){ b.className='rating-btn'; b.textContent=b.textContent.replace('✓ ',''); });
+  document.getElementById('rating-notes').style.display='none';
+  P = { opening: null, closing: null };
+  ['op-yes','op-no','cl-yes','cl-no'].forEach(function(id){ document.getElementById(id).className='presence-btn'; });
+  document.querySelectorAll('.obs-section').forEach(function(s){ s.classList.remove('show'); });
+}
+</script>
+</body>
+</html>
