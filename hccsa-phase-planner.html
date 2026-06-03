@@ -446,7 +446,7 @@ function addPhase(){
     +'</div>';
   document.getElementById('plist').appendChild(div);
   refresh();
-  setTimeout(function(){div.scrollIntoView({behavior:'smooth',block:'center'});},80);
+  if(phases.length>1){setTimeout(function(){div.scrollIntoView({behavior:'smooth',block:'center'});},80);}
 }
 
 function remPhase(id){
