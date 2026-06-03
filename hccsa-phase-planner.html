@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Block Phase Planner</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a2e4a;--navy-dark:#0f1d30;--gold:#c8a84b;--gold-pale:#fdf6e3;--gold-text:#7a6010;
+  --white:#fff;--off:#f8f7f4;--rule:#e0d8cc;--ink:#1c1c1a;--inkl:#3a3830;
+  --green-bg:#eef6ec;--radius:9px;
+}
+body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height:100vh;-webkit-text-size-adjust:100%}
+#topbar{background:var(--navy-dark);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:101;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+#topbar .tag{color:rgba(255,255,255,.65);font-size:13px;letter-spacing:1px;text-transform:uppercase}
+#sb{position:sticky;top:42px;z-index:100;background:var(--navy);padding:7px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.sb-lbl{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:bold;white-space:nowrap;flex-shrink:0}
+.sb-track{flex:1;height:10px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden}
+.sb-fill{height:100%;background:var(--gold);border-radius:5px;transition:width .25s,background .25s;width:0}
+.sb-fill.full{background:#4a9a40}
+.sb-fill.warn{background:#d4a030}
+.sb-fill.over{background:#c04040}
+.sb-txt{font-size:13px;color:rgba(255,255,255,.9);white-space:nowrap;flex-shrink:0}
+.sb-rem{color:var(--gold);font-weight:bold}
+.sb-full{color:#6ad060;font-weight:bold}
+.sb-ov{color:#ff8888;font-weight:bold}
+#page{max-width:900px;margin:0 auto;padding:20px 20px 80px}
+@media(max-width:600px){#page{padding:12px 12px 60px}}
+.card{background:var(--white);border-radius:14px;border:1px solid var(--rule);overflow:hidden;box-shadow:0 3px 24px rgba(0,0,0,.07);margin-bottom:16px}
+.card-hdr{background:var(--navy);padding:18px 22px}
+.eyebrow{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:6px}
+.card-title{font-size:26px;color:var(--white);font-weight:bold;line-height:1.2}
+.card-sub{font-size:15px;color:rgba(255,255,255,.75);margin-top:6px;line-height:1.5}
+.card-body{padding:20px 22px;display:flex;flex-direction:column;gap:18px}
+.slbl{font-size:12px;color:var(--inkl);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:bold}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:500px){.meta-grid{grid-template-columns:1fr}}
+.mf label{display:block;font-size:13px;color:var(--inkl);margin-bottom:5px}
+.mf input,.mf select{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:16px;background:var(--off);color:var(--ink);outline:none;-webkit-appearance:none;appearance:none}
+.mf input:focus,.mf select:focus{border-color:var(--navy)}
+.mfull{grid-column:1/-1}
+
+/* Duration radio buttons */
+.dur-radios{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.dur-radio-label{display:flex;align-items:center;gap:7px;cursor:pointer;padding:9px 14px;border:2px solid var(--rule);border-radius:8px;font-size:15px;color:var(--ink);background:var(--off);transition:all .13s;-webkit-tap-highlight-color:transparent}
+.dur-radio-label:hover{border-color:var(--navy)}
+.dur-radio-label input[type=radio]{display:none}
+.dur-radio-label.checked{border-color:var(--navy);background:var(--navy);color:var(--white);font-weight:bold}
+.dur-other-wrap{display:none;align-items:center;gap:8px}
+.dur-other-wrap.show{display:flex}
+.dur-other-wrap input{width:72px;padding:8px 10px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:16px;background:var(--off);color:var(--ink);outline:none;text-align:center}
+.dur-other-wrap label{font-size:14px;color:var(--inkl)}
+.dur-note{font-size:13px;color:var(--gold-text);font-style:italic;line-height:1.5;background:var(--gold-pale);border-left:3px solid var(--gold);padding:8px 12px;border-radius:0 6px 6px 0}
+
+/* Phase cards */
+.phase-list{display:flex;flex-direction:column;gap:14px}
+.phase-card{border:2px solid var(--rule);border-radius:var(--radius);overflow:hidden}
+.phase-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:var(--navy)}
+.phase-hdr-l{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pnum{font-size:13px;color:var(--gold);font-weight:bold;text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+.pcat{font-size:12px;color:rgba(255,255,255,.5);font-style:italic;white-space:nowrap}
+.pclock{font-size:14px;color:rgba(255,255,255,.9);background:rgba(255,255,255,.12);padding:3px 10px;border-radius:12px;font-style:italic;transition:all .2s;white-space:nowrap}
+.pclock.dim{color:rgba(255,255,255,.35);background:transparent}
+.premove{background:none;border:none;color:rgba(255,255,255,.4);font-size:22px;cursor:pointer;line-height:1;padding:0;-webkit-tap-highlight-color:transparent}
+.premove:hover{color:var(--white)}
+.phase-body{padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--off)}
+
+/* Category accordion */
+.cat-group{border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--white);margin-bottom:6px}
+.cat-btn{width:100%;padding:11px 14px;background:var(--white);border:none;font-family:Georgia,serif;font-size:15px;font-weight:bold;color:var(--navy);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent;transition:background .13s}
+.cat-btn:hover{background:var(--off)}
+.cat-btn.open{background:var(--navy);color:var(--white)}
+.cat-arrow{font-size:12px;transition:transform .2s}
+.cat-btn.open .cat-arrow{transform:rotate(180deg)}
+.cat-items{display:none;padding:8px;border-top:1px solid var(--rule);flex-direction:column;gap:6px;background:var(--white)}
+.cat-items.open{display:flex}
+
+/* Selected item display */
+.sel-display{display:none;padding:10px 14px;background:var(--navy);border-radius:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.sel-display.show{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sel-display-text{font-size:14px;color:var(--white);font-weight:bold}
+.sel-display-change{font-size:12px;color:var(--gold);text-decoration:underline;white-space:nowrap}
+
+.act-btn{padding:10px 12px;border:2px solid var(--rule);border-radius:7px;background:var(--white);font-family:Georgia,serif;font-size:14px;color:var(--ink);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all .13s;-webkit-tap-highlight-color:transparent;line-height:1.35;width:100%}
+.act-btn:hover{border-color:var(--navy)}
+.adot{width:8px;height:8px;border-radius:50%;flex-shrink:0;opacity:.6}
+.ds{background:#4a9a40}.dt{background:#c8a84b}.dn{background:#8888aa}
+.act-other{width:100%;padding:10px 12px;border:2px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;-webkit-appearance:none;margin-top:4px}
+.act-other:focus,.act-other.actv{border-color:var(--navy)}
+
+.time-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.time-row label{font-size:13px;color:var(--inkl);white-space:nowrap}
+.tsel{padding:9px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:15px;background:var(--white);color:var(--ink);outline:none;-webkit-appearance:none;appearance:none;cursor:pointer}
+.tsel:focus{border-color:var(--navy)}
+.tcust{display:none;align-items:center;gap:6px}
+.tcust.show{display:flex}
+.tcust input{width:68px;padding:9px 10px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:15px;background:var(--white);color:var(--ink);outline:none;text-align:center;-webkit-appearance:none}
+.cta{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:15px;background:var(--white);color:var(--ink);resize:none;outline:none;line-height:1.65;min-height:68px;-webkit-appearance:none}
+.cta:focus{border-color:var(--navy)}
+.closing-ex{background:var(--gold-pale);border:1px solid #e5d090;border-radius:7px;padding:14px;display:none;flex-direction:column;gap:12px}
+.closing-ex.show{display:flex}
+.clbl{font-size:12px;color:var(--gold-text);text-transform:uppercase;letter-spacing:1.5px;font-weight:bold}
+.cflbl{font-size:13px;color:var(--gold-text);margin-bottom:5px}
+.ceta{width:100%;padding:9px 11px;border:1px solid #e5d090;border-radius:7px;font-family:Georgia,serif;font-size:15px;background:var(--white);color:var(--ink);resize:none;outline:none;line-height:1.6;min-height:52px;-webkit-appearance:none}
+
+/* Balance */
+.bal-box{background:var(--navy);border-radius:var(--radius);padding:14px 18px;display:none;flex-direction:column;gap:10px}
+.bal-box.show{display:flex}
+.bal-title{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:bold}
+.bal-row{display:flex;align-items:center;gap:10px}
+.bal-lbl{font-size:14px;color:rgba(255,255,255,.85);min-width:155px}
+.bal-track{flex:1;height:8px;background:rgba(255,255,255,.15);border-radius:4px;overflow:hidden}
+.bal-fs{height:100%;background:#4a9a40;border-radius:4px;transition:width .3s}
+.bal-ft{height:100%;background:var(--gold);border-radius:4px;transition:width .3s}
+.bal-num{font-size:14px;color:rgba(255,255,255,.9);font-weight:bold;white-space:nowrap;min-width:55px;text-align:right}
+
+/* Buttons */
+.add-btn{width:100%;padding:13px;border:2px dashed var(--rule);border-radius:var(--radius);background:transparent;font-family:Georgia,serif;font-size:16px;color:var(--inkl);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.add-btn:hover{border-color:var(--navy);color:var(--navy)}
+.add-btn:disabled{opacity:.35;cursor:not-allowed;border-color:var(--rule);color:var(--inkl)}
+.full-note{font-size:14px;color:#2a6a20;font-style:italic;text-align:center;display:none;padding:6px}
+.full-note.show{display:block}
+.over-warn{background:#fff8ec;border:1px solid var(--gold);border-radius:var(--radius);padding:12px 16px;font-size:15px;color:#7a5800;font-style:italic;display:none}
+.over-warn.show{display:block}
+.gen-btn{width:100%;padding:16px;background:var(--gold);color:var(--navy);border:none;border-radius:var(--radius);font-family:Georgia,serif;font-size:18px;font-weight:bold;cursor:pointer;display:none;-webkit-tap-highlight-color:transparent}
+.gen-btn.show{display:block}
+
+/* Change banner */
+.change-banner{background:var(--gold-pale);border:1px solid var(--gold);border-radius:var(--radius);padding:12px 16px;font-size:15px;color:var(--gold-text);font-style:italic;display:none;text-align:center}
+.change-banner.show{display:block}
+
+/* Output */
+.out-card{display:none}
+.out-card.show{display:block}
+.out-hdr{background:var(--navy);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.out-htitle{font-size:15px;color:var(--gold);font-weight:bold;text-transform:uppercase;letter-spacing:1px}
+.out-btns{display:flex;gap:8px;flex-wrap:wrap}
+.obtn{padding:8px 14px;border:none;border-radius:6px;font-family:Georgia,serif;font-size:13px;font-weight:bold;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.obtn-gold{background:var(--gold);color:var(--navy)}
+.obtn-outline{background:transparent;border:1px solid rgba(255,255,255,.4);color:var(--white)}
+.obtn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.out-body{padding:20px 22px}
+.plan-hdr-box{background:var(--navy);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px}
+.plan-class{font-size:20px;color:var(--white);font-weight:bold;margin-bottom:4px}
+.plan-meta{font-size:14px;color:rgba(255,255,255,.65)}
+.otbl{width:100%;border-collapse:collapse;margin-bottom:16px}
+.otbl th{background:var(--navy);color:var(--gold);font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:10px 14px;text-align:left}
+.otbl td{padding:13px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+.otbl tr:last-child td{border-bottom:none}
+.otbl tr:nth-child(even) td{background:var(--off)}
+.otag{display:inline-block;background:var(--navy);color:var(--gold);font-size:12px;padding:2px 9px;border-radius:4px;font-weight:bold;white-space:nowrap;margin-bottom:4px}
+.oclk{font-size:17px;font-weight:bold;color:var(--navy);white-space:nowrap}
+.odur{font-size:13px;color:var(--inkl);white-space:nowrap}
+.oact{font-size:16px;font-weight:bold;color:var(--ink);margin-bottom:5px}
+.ocontent{font-size:15px;color:var(--ink);line-height:1.6}
+.ohw{font-size:14px;color:var(--gold-text);font-style:italic;margin-top:5px}
+.obuf td{color:#2a5a20;background:var(--green-bg)!important}
+.snap{background:var(--navy);border-radius:var(--radius);padding:16px 20px}
+.snap-title{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:2px;font-weight:bold;margin-bottom:12px}
+.snap-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:400px){.snap-grid{grid-template-columns:1fr}}
+.si{background:rgba(255,255,255,.08);border-radius:6px;padding:10px 14px}
+.si-num{font-size:22px;color:var(--white);font-weight:bold}
+.si-lbl{font-size:12px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.si-s{border-left:3px solid #4a9a40}.si-t{border-left:3px solid var(--gold)}.si-b{border-left:3px solid #88aacc}.si-n{border-left:3px solid rgba(255,255,255,.3)}
+.action-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding-top:4px;align-items:flex-start}
+.action-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;min-width:160px;max-width:280px}
+.abtn{padding:13px 22px;border-radius:8px;font-family:Georgia,serif;font-size:16px;cursor:pointer;border:none;min-width:160px;text-align:center;width:100%;-webkit-tap-highlight-color:transparent}
+.abtn-clear{background:var(--off);border:1px solid var(--rule)!important;color:var(--inkl)}
+.abtn-pdf{background:var(--gold);color:var(--navy);font-weight:bold}
+.ahint{font-size:13px;color:var(--inkl);line-height:1.55;text-align:center;font-style:italic}
+.copied{font-size:13px;color:#2a6a20;font-style:italic;display:none;margin-top:6px;text-align:center}
+.copied.show{display:block}
+
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:white}
+  #topbar,#sb,.phase-list,.add-btn,.gen-btn,.reset-btn,.out-btns,.action-row,.over-warn,.full-note,.change-banner,.bal-box,.card:not(#out-wrap){display:none!important}
+  #out-wrap{display:block!important;box-shadow:none!important;border:none!important}
+  .out-hdr{display:none!important}
+  .otbl tr:nth-child(even) td{background:var(--off)!important}
+}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <span class="tag">Block Phase Planner</span>
+  <span class="tag" id="tb-class" style="color:rgba(255,255,255,.4);font-style:italic"></span>
+</div>
+<div id="sb">
+  <span class="sb-lbl">Time</span>
+  <div class="sb-track"><div class="sb-fill" id="sb-fill"></div></div>
+  <span class="sb-txt" id="sb-txt"><span class="sb-rem">75 min remaining</span></span>
+</div>
+<div id="page">
+
+<!-- HEADER CARD -->
+<div class="card">
+  <div class="card-hdr">
+    <div class="eyebrow">Teacher Planning Tool</div>
+    <div class="card-title">Block Phase Planner</div>
+    <div class="card-sub">Plan your block period phase by phase. Clock times update live as you build. Generate a lesson roadmap to take to class.</div>
+  </div>
+  <div class="card-body">
+    <div>
+      <div class="slbl">Class Information</div>
+      <div class="meta-grid">
+        <div class="mf mfull"><label>Class Name / Subject</label><input type="text" id="cn" placeholder="e.g. Junior Rhetoric · 8th Grade Logic · Ancient Literature" oninput="onHdr()"></div>
+        <div class="mf"><label>Period</label>
+          <select id="per" onchange="onHdr()"><option value="">— Select —</option><option>Block 1</option><option>Block 2</option><option>Block 3</option><option>Block 4</option><option>Block 5</option><option>Block 6</option><option>Block 7</option><option>Block 8</option></select>
+        </div>
+        <div class="mf"><label>Start Time</label><input type="time" id="st" oninput="refresh()"></div>
+        <div class="mf"><label>Date</label><input type="date" id="ld"></div>
+        <div class="mf mfull"><label>Lesson Topic</label><input type="text" id="lt" placeholder="e.g. Aeneid Book 2 · Persian Wars · Systems of Equations"></div>
+      </div>
+    </div>
+    <div>
+      <div class="slbl">Block Duration</div>
+      <div class="dur-radios" id="dur-radios">
+        <label class="dur-radio-label checked" onclick="setDur(75,this)"><input type="radio" name="dur" value="75" checked>75 min</label>
+        <label class="dur-radio-label" onclick="setDur(60,this)"><input type="radio" name="dur" value="60">60 min</label>
+        <label class="dur-radio-label" onclick="setDur(55,this)"><input type="radio" name="dur" value="55">55 min</label>
+        <label class="dur-radio-label" onclick="setDur(45,this)"><input type="radio" name="dur" value="45">45 min</label>
+        <label class="dur-radio-label" onclick="setDur('other',this)"><input type="radio" name="dur" value="other">Other</label>
+      </div>
+      <div class="dur-other-wrap" id="dov"><input type="number" id="dc" min="10" max="180" placeholder="min" oninput="refresh()"><label>minutes</label></div>
+      <div class="dur-note">⚠ Monday blocks are 60 minutes · Tuesday–Friday standard blocks are 75 minutes · Remember to update this before planning.</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE BUILDER CARD -->
+<div class="card">
+  <div class="card-body">
+    <div class="slbl">Lesson Phases</div>
+    <div class="phase-list" id="plist"></div>
+    <div class="bal-box" id="bal-box">
+      <div class="bal-title">Time Distribution — no judgment, just information</div>
+      <div class="bal-row"><span class="bal-lbl">● Student-Centered</span><div class="bal-track"><div class="bal-fs" id="bfs" style="width:0%"></div></div><span class="bal-num" id="bsn">0 min</span></div>
+      <div class="bal-row"><span class="bal-lbl">● Teacher-Directed</span><div class="bal-track"><div class="bal-ft" id="bft" style="width:0%"></div></div><span class="bal-num" id="btn2">0 min</span></div>
+    </div>
+    <div class="full-note" id="full-note">✓ Block is fully planned — adding a phase will require redistributing time</div>
+    <div class="over-warn" id="ow">⚠ Plan is over the block duration — reduce a phase duration or remove a phase before generating</div>
+    <button class="add-btn" id="ab" onclick="addPhase()">+ Add Phase</button>
+    <button class="gen-btn" id="gb" onclick="genPlan()">Generate Lesson Roadmap →</button>
+  </div>
+</div>
+
+<!-- OUTPUT CARD -->
+<div class="card" id="out-wrap" style="display:none">
+  <div class="out-hdr">
+    <span class="out-htitle">Lesson Roadmap</span>
+    <div class="out-btns">
+      <button class="obtn obtn-outline" onclick="copyPlain()">Copy Plain Text</button>
+      <button class="obtn obtn-gold" onclick="copyFormatted()">Copy</button>
+    </div>
+  </div>
+  <div class="out-body">
+    <div class="change-banner" id="cb2">Plan has changed — hit Generate again to update the roadmap</div>
+    <div id="po"></div>
+    <div class="copied" id="cm">✓ Copied to clipboard</div>
+    <div class="action-row" style="margin-top:20px">
+      <div class="action-col">
+        <button class="abtn abtn-clear" onclick="resetAll()">← Start Over</button>
+      </div>
+      <div class="action-col">
+        <button class="abtn abtn-pdf" onclick="savePDF()">Save as PDF / Print</button>
+        <p class="ahint"><strong>Mac:</strong> PDF button bottom-left of print dialog → Save as PDF → Google Drive.<br><strong>iPhone/iPad:</strong> Pinch outward on preview → Share → Save to Files or Google Drive.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end page -->
+<script>
+var phases=[],pid=0,customDur=75,planGenerated=false;
+
+var CATS=[
+  {label:'Opening & Closing',items:[['Opening Prayer & Devotion','n'],['Closing, Homework & Planner','n']]},
+  {label:'Instruction',items:[['Direct Instruction','t'],['Read Aloud','t'],['Primary Source Reading','s'],['Demonstration','t']]},
+  {label:'Discussion',items:[['Socratic Discussion','s'],['Partner Discussion','s'],['Group Work','s'],['Debate','s']]},
+  {label:'Student Work',items:[['Student Practice & Application','s'],['Written Response','s'],['Student Presentations','s'],['Retrieval Practice','s']]},
+  {label:'Review & Assessment',items:[['Oral Review','t'],['Recitation & Memory Work','t'],['Quiz / Game Review','t'],['Formal Assessment','t']]}
+];
+var CLOSING='Closing, Homework & Planner';
+
+function totDur(){
+  var sel=document.querySelector('input[name=dur]:checked');
+  if(!sel)return 75;
+  if(sel.value==='other'){var v=parseInt(document.getElementById('dc').value,10);return isNaN(v)||v<1?75:v;}
+  return parseInt(sel.value,10);
+}
+
+function setDur(val,lbl){
+  document.querySelectorAll('.dur-radio-label').forEach(function(l){l.classList.remove('checked');});
+  lbl.classList.add('checked');
+  var ov=document.getElementById('dov');
+  ov.className='dur-other-wrap'+(val==='other'?' show':'');
+  refresh();
+}
+
+function startMin(){var v=document.getElementById('st').value;if(!v)return null;var p=v.split(':');return parseInt(p[0],10)*60+parseInt(p[1],10);}
+function fmtT(m){var h=Math.floor(m/60),mn=m%60,ap=h>=12?'PM':'AM',h12=h%12||12;return h12+':'+(mn<10?'0':'')+mn+' '+ap;}
+function pMins(id){var s=document.getElementById('ts-'+id);if(!s)return 0;if(s.value==='c'){var ci=document.getElementById('tc-'+id);return ci?parseInt(ci.value,10)||0:0;}return parseInt(s.value,10)||0;}
+function pAct(id){
+  var sel=document.querySelector('#ag-'+id+' .act-btn.sel');
+  if(sel)return{label:sel.dataset.act,type:sel.dataset.type};
+  var oth=document.getElementById('ao-'+id);
+  if(oth&&oth.value.trim()&&oth.classList.contains('actv'))return{label:oth.value.trim(),type:'n'};
+  return null;
+}
+function pStart(idx){var sm=startMin();if(sm===null)return null;for(var i=0;i<idx;i++)sm+=pMins(phases[i].id);return sm;}
+
+function markChanged(){
+  if(planGenerated){
+    var cb=document.getElementById('cb2');
+    if(cb)cb.classList.add('show');
+  }
+}
+
+function refresh(){
+  var tot=totDur(),used=0,sm=0,tm=0;
+  phases.forEach(function(p,i){
+    var m=pMins(p.id);used+=m;
+    var a=pAct(p.id);if(a){if(a.type==='s')sm+=m;else if(a.type==='t')tm+=m;}
+    var ps=pStart(i);
+    var el=document.getElementById('pc-'+p.id);
+    if(el){
+      if(ps!==null&&m>0){el.textContent=fmtT(ps)+' – '+fmtT(ps+m);el.className='pclock';}
+      else if(ps!==null){el.textContent=fmtT(ps)+' – ?';el.className='pclock dim';}
+      else{el.textContent=m>0?m+' min':'—';el.className='pclock dim';}
+    }
+    var a2=pAct(p.id);var cl=document.getElementById('pcat-'+p.id);
+    if(cl)cl.textContent=a2?'· '+a2.label:'';
+  });
+  var rem=tot-used,pct=Math.min(used/tot*100,100);
+  var sf=document.getElementById('sb-fill');
+  sf.style.width=pct+'%';
+  sf.className='sb-fill'+(used>tot?' over':used===tot?' full':used>=tot*.85?' warn':'');
+  var st=document.getElementById('sb-txt');
+  if(rem<0)st.innerHTML='<span class="sb-ov">'+Math.abs(rem)+' min over</span>';
+  else if(rem===0)st.innerHTML='<span class="sb-full">Block full ✓</span>';
+  else st.innerHTML='<span class="sb-rem">'+rem+' min remaining</span>';
+  var hasAct=phases.some(function(p){return pAct(p.id)&&pMins(p.id)>0;});
+  var bb=document.getElementById('bal-box');
+  if(hasAct&&used>0){bb.classList.add('show');var mx=Math.max(sm,tm,1);document.getElementById('bfs').style.width=(sm/mx*100)+'%';document.getElementById('bft').style.width=(tm/mx*100)+'%';document.getElementById('bsn').textContent=sm+' min';document.getElementById('btn2').textContent=tm+' min';}
+  else bb.classList.remove('show');
+  var ow=document.getElementById('ow'),ab=document.getElementById('ab'),fn=document.getElementById('full-note');
+  if(used>tot){ow.classList.add('show');fn.classList.remove('show');ab.disabled=true;}
+  else if(used===tot){ow.classList.remove('show');fn.classList.add('show');ab.disabled=false;}
+  else{ow.classList.remove('show');fn.classList.remove('show');ab.disabled=false;}
+  var rdy=phases.filter(function(p){return pAct(p.id)&&pMins(p.id)>0;}).length>=1&&used<=tot;
+  document.getElementById('gb').className='gen-btn'+(rdy?' show':'');
+  markChanged();
+}
+
+function onHdr(){var cn=document.getElementById('cn').value.trim();var tb=document.getElementById('tb-class');if(tb)tb.textContent=cn;refresh();}
+
+function buildCatHTML(id){
+  var html='<div id="ag-'+id+'">';
+  CATS.forEach(function(cat,ci){
+    html+='<div class="cat-group">';
+    html+='<button class="cat-btn" onclick="togCat('+id+','+ci+',this)" type="button">'+esc(cat.label)+' <span class="cat-arrow">▼</span></button>';
+    html+='<div class="cat-items" id="ci-'+id+'-'+ci+'">';
+    cat.items.forEach(function(it){
+      var dc=it[1]==='s'?'ds':it[1]==='t'?'dt':'dn';
+      html+='<button class="act-btn" data-act="'+esc(it[0])+'" data-type="'+it[1]+'" onclick="selAct('+id+',this)" type="button"><span class="adot '+dc+'"></span>'+esc(it[0])+'</button>';
+    });
+    html+='</div></div>';
+  });
+  html+='<input class="act-other" id="ao-'+id+'" type="text" placeholder="Other — describe this phase..." oninput="selOther('+id+',this)" onfocus="selOther('+id+',this)">';
+  html+='</div>';
+  html+='<div class="sel-display" id="sd-'+id+'" onclick="clearSel('+id+')">';
+  html+='<span class="sel-display-text" id="sdt-'+id+'"></span>';
+  html+='<span class="sel-display-change">tap to change</span>';
+  html+='</div>';
+  return html;
+}
+
+function togCat(pid,ci,btn){
+  var isOpen=btn.classList.contains('open');
+  var ag=document.getElementById('ag-'+pid);
+  ag.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('open');});
+  ag.querySelectorAll('.cat-items').forEach(function(c){c.classList.remove('open');});
+  if(!isOpen){btn.classList.add('open');var items=document.getElementById('ci-'+pid+'-'+ci);if(items)items.classList.add('open');}
+}
+
+function selAct(id,btn){
+  document.querySelectorAll('#ag-'+id+' .act-btn').forEach(function(b){b.classList.remove('sel');});
+  var oth=document.getElementById('ao-'+id);if(oth){oth.value='';oth.classList.remove('actv');}
+  btn.classList.add('sel');
+  // Collapse all cats
+  var ag=document.getElementById('ag-'+id);
+  ag.querySelectorAll('.cat-btn').forEach(function(b){b.classList.remove('open');});
+  ag.querySelectorAll('.cat-items').forEach(function(c){c.classList.remove('open');});
+  // Hide picker, show selection display
+  ag.style.display='none';
+  var sd=document.getElementById('sd-'+id);var sdt=document.getElementById('sdt-'+id);
+  if(sd&&sdt){sdt.textContent=btn.dataset.act;sd.classList.add('show');}
+  togClosing(id,btn.dataset.act);
+  refresh();
+}
+
+function selOther(id,inp){
+  document.querySelectorAll('#ag-'+id+' .act-btn').forEach(function(b){b.classList.remove('sel');});
+  inp.classList.toggle('actv',!!inp.value.trim());
+  if(inp.value.trim()){
+    var ag=document.getElementById('ag-'+id);ag.style.display='none';
+    var sd=document.getElementById('sd-'+id);var sdt=document.getElementById('sdt-'+id);
+    if(sd&&sdt){sdt.textContent=inp.value.trim();sd.classList.add('show');}
+  }
+  togClosing(id,null);refresh();
+}
+
+function clearSel(id){
+  var ag=document.getElementById('ag-'+id);ag.style.display='';
+  var sd=document.getElementById('sd-'+id);if(sd)sd.classList.remove('show');
+  document.querySelectorAll('#ag-'+id+' .act-btn').forEach(function(b){b.classList.remove('sel');});
+  var oth=document.getElementById('ao-'+id);if(oth){oth.value='';oth.classList.remove('actv');}
+  togClosing(id,null);refresh();
+}
+
+function togClosing(id,act){
+  var ce=document.getElementById('ce-'+id);
+  if(ce){if(act===CLOSING){ce.classList.add('show');}else{ce.classList.remove('show');}}
+}
+
+function addPhase(){
+  pid++;var id=pid;phases.push({id:id});
+  var div=document.createElement('div');div.className='phase-card';div.id='ph-'+id;
+  div.innerHTML=
+    '<div class="phase-hdr"><div class="phase-hdr-l"><span class="pnum" id="pn-'+id+'">Phase '+phases.length+'</span><span class="pcat" id="pcat-'+id+'"></span><span class="pclock dim" id="pc-'+id+'">—</span></div><button class="premove" onclick="remPhase('+id+')" type="button">×</button></div>'
+    +'<div class="phase-body">'
+      +'<div><div class="slbl">Activity Type</div>'+buildCatHTML(id)+'</div>'
+      +'<div class="time-row"><label>Duration:</label>'
+        +'<select class="tsel" id="ts-'+id+'" onchange="onTC('+id+')">'
+          +'<option value="">— min —</option>'
+          +'<option value="5">5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="20">20 min</option><option value="25">25 min</option>'
+          +'<option value="c">Other...</option>'
+        +'</select>'
+        +'<div class="tcust" id="tcw-'+id+'"><input type="number" id="tc-'+id+'" min="1" max="180" placeholder="min" oninput="refresh()"><span style="font-size:14px;color:var(--inkl)">min</span></div>'
+      +'</div>'
+      +'<div><div class="slbl">What will you do in this phase?</div><textarea class="cta" id="ct-'+id+'" rows="3" placeholder="Describe the specific content, text, or activity for this phase..."></textarea></div>'
+      +'<div class="closing-ex" id="ce-'+id+'"><div class="clbl">Closing Details</div><div><div class="cflbl">Homework Assignment</div><textarea class="ceta" id="hw-'+id+'" rows="2" placeholder="What is the homework? Students will write this in their planners."></textarea></div><div><div class="cflbl">Student Planner Use</div><textarea class="ceta" id="pl-'+id+'" rows="2" placeholder="What will students write in their planners before leaving?"></textarea></div></div>'
+    +'</div>';
+  document.getElementById('plist').appendChild(div);
+  refresh();
+  setTimeout(function(){div.scrollIntoView({behavior:'smooth',block:'center'});},80);
+}
+
+function remPhase(id){
+  phases=phases.filter(function(p){return p.id!==id;});
+  var c=document.getElementById('ph-'+id);if(c)c.remove();
+  phases.forEach(function(p,i){var e=document.getElementById('pn-'+p.id);if(e)e.textContent='Phase '+(i+1);});
+  refresh();
+}
+
+function onTC(id){
+  var s=document.getElementById('ts-'+id),w=document.getElementById('tcw-'+id);
+  if(s.value==='c'){w.classList.add('show');}else{w.classList.remove('show');var ci=document.getElementById('tc-'+id);if(ci)ci.value='';}
+  refresh();
+}
+
+function buildPlanData(){
+  var cn=document.getElementById('cn').value.trim()||'Untitled Class';
+  var per=document.getElementById('per').value;
+  var top=document.getElementById('lt').value.trim();
+  var tot=totDur(),sm2=startMin();
+  var dateRaw=document.getElementById('ld').value,dateStr='';
+  if(dateRaw){var d=new Date(dateRaw+'T12:00:00');dateStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});}
+  var used=0,sMin=0,tMin=0,phCnt=0,cursor=sm2;
+  var rows=[];
+  phases.forEach(function(p,i){
+    var a=pAct(p.id),m=pMins(p.id);if(!a||m===0)return;
+    var ct=(document.getElementById('ct-'+p.id)||{}).value||'';
+    var hw=(document.getElementById('hw-'+p.id)||{}).value||'';
+    var pl=(document.getElementById('pl-'+p.id)||{}).value||'';
+    var clk='';if(cursor!==null){clk=fmtT(cursor)+' – '+fmtT(cursor+m);cursor+=m;}
+    used+=m;phCnt++;if(a.type==='s')sMin+=m;else if(a.type==='t')tMin+=m;
+    rows.push({num:i+1,act:a.label,m:m,clk:clk,ct:ct,hw:hw,pl:pl});
+  });
+  var buf=tot-used;
+  var bufClk='';if(cursor!==null&&buf>0)bufClk=fmtT(cursor)+' – '+fmtT(cursor+buf);
+  return{cn:cn,per:per,top:top,tot:tot,sm2:sm2,dateStr:dateStr,used:used,sMin:sMin,tMin:tMin,phCnt:phCnt,buf:buf,bufClk:bufClk,rows:rows};
+}
+
+function genPlan(){
+  var D=buildPlanData();
+  var html='';
+  html+='<div class="plan-hdr-box"><div class="plan-class">'+esc(D.cn)+(D.top?' — '+esc(D.top):'')+'</div><div class="plan-meta">';
+  if(D.per)html+=esc(D.per)+'&nbsp;·&nbsp;';
+  if(D.sm2!==null)html+=fmtT(D.sm2)+'&nbsp;·&nbsp;';
+  html+=D.tot+' min block';if(D.dateStr)html+='&nbsp;·&nbsp;'+D.dateStr;html+='</div></div>';
+  html+='<table class="otbl"><thead><tr><th>Clock Time</th><th>Activity & Content</th><th style="text-align:center;white-space:nowrap">Duration</th></tr></thead><tbody>';
+  D.rows.forEach(function(r){
+    html+='<tr><td style="white-space:nowrap;vertical-align:top"><div class="otag">Phase '+r.num+'</div><br><div class="oclk">'+(r.clk||r.m+' min')+'</div><div class="odur">'+r.m+' min</div></td>';
+    html+='<td><div class="oact">'+esc(r.act)+'</div>';
+    if(r.ct.trim())html+='<div class="ocontent">'+esc(r.ct)+'</div>';
+    if(r.hw.trim())html+='<div class="ohw">Homework: '+esc(r.hw)+'</div>';
+    if(r.pl.trim())html+='<div class="ohw">Planner: '+esc(r.pl)+'</div>';
+    html+='</td><td style="text-align:center;font-weight:bold;color:var(--navy);vertical-align:top;padding-top:22px">'+r.m+'</td></tr>';
+  });
+  if(D.buf>0){
+    html+='<tr class="obuf"><td style="white-space:nowrap;vertical-align:top"><div class="otag" style="background:#3a6a30">Buffer</div><br><div class="oclk" style="color:#2a5a20">'+(D.bufClk||D.buf+' min')+'</div><div class="odur" style="color:#2a5a20">'+D.buf+' min</div></td>';
+    html+='<td><div class="oact" style="color:#2a5a20">Buffer Time</div><div class="ocontent" style="color:#3a6a30">Unplanned time — available for extended discussion, questions, or review.</div></td>';
+    html+='<td style="text-align:center;font-weight:bold;color:#2a5a20;vertical-align:top;padding-top:22px">'+D.buf+'</td></tr>';
+  }else if(D.buf<0){
+    html+='<tr><td colspan="3" style="text-align:center;color:#8a2020;font-style:italic;padding:12px">⚠ Plan is '+Math.abs(D.buf)+' minutes over the block duration</td></tr>';
+  }
+  html+='</tbody></table>';
+  html+='<div class="snap"><div class="snap-title">Planning Snapshot</div><div class="snap-grid">';
+  html+='<div class="si si-n"><div class="si-num">'+D.tot+' min</div><div class="si-lbl">Total Block</div></div>';
+  html+='<div class="si si-n"><div class="si-num">'+D.phCnt+'</div><div class="si-lbl">Phases Planned</div></div>';
+  html+='<div class="si si-s"><div class="si-num">'+D.sMin+' min</div><div class="si-lbl">Student-Centered</div></div>';
+  html+='<div class="si si-t"><div class="si-num">'+D.tMin+' min</div><div class="si-lbl">Teacher-Directed</div></div>';
+  html+='<div class="si si-b"><div class="si-num">'+Math.max(D.buf,0)+' min</div><div class="si-lbl">Buffer Time</div></div>';
+  html+='<div class="si si-n"><div class="si-num">'+D.used+' min</div><div class="si-lbl">Time Planned</div></div>';
+  html+='</div></div>';
+  document.getElementById('po').innerHTML=html;
+  var ow=document.getElementById('out-wrap');ow.style.display='block';
+  var cb=document.getElementById('cb2');if(cb)cb.classList.remove('show');
+  planGenerated=true;
+  setTimeout(function(){ow.scrollIntoView({behavior:'smooth',block:'start'});},100);
+}
+
+function plainText(){
+  var D=buildPlanData();
+  var txt=D.cn+(D.top?' — '+D.top:'')+'\n';
+  if(D.per)txt+=D.per+'  ';if(D.sm2!==null)txt+=fmtT(D.sm2)+'  ';txt+=D.tot+' min\n';
+  if(D.dateStr)txt+=D.dateStr+'\n';txt+='\n';
+  D.rows.forEach(function(r){
+    txt+='Phase '+r.num+' — '+r.act+'  ('+r.m+' min)  '+(r.clk||'')+'\n';
+    if(r.ct.trim())txt+='  '+r.ct+'\n';
+    if(r.hw.trim())txt+='  Homework: '+r.hw+'\n';
+    if(r.pl.trim())txt+='  Planner: '+r.pl+'\n';
+    txt+='\n';
+  });
+  if(D.buf>0)txt+='Buffer Time  ('+D.buf+' min)  '+D.bufClk+'\n  Unplanned — available for questions or extended discussion\n\n';
+  txt+='Planning Snapshot\n';
+  txt+='Total Block: '+D.tot+' min · Phases: '+D.phCnt+' · Student-Centered: '+D.sMin+' min · Teacher-Directed: '+D.tMin+' min · Buffer: '+Math.max(D.buf,0)+' min\n';
+  return txt;
+}
+
+function copyFormatted(){navigator.clipboard.writeText(plainText()).then(showCopied);}
+function copyPlain(){navigator.clipboard.writeText(plainText()).then(showCopied);}
+function showCopied(){var m=document.getElementById('cm');m.classList.add('show');setTimeout(function(){m.classList.remove('show');},2500);}
+
+function savePDF(){
+  var D=buildPlanData();
+  var orig=document.title;
+  document.title=(D.cn||'Lesson')+(D.top?' — '+D.top:'');
+  window.print();
+  setTimeout(function(){document.title=orig;},1000);
+}
+
+function resetAll(){
+  if(!confirm('Clear this entire plan? This cannot be undone.'))return;
+  phases=[];pid=0;planGenerated=false;
+  document.getElementById('plist').innerHTML='';
+  ['cn','lt','st','ld'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('per').value='';
+  document.querySelectorAll('.dur-radio-label').forEach(function(l){l.classList.remove('checked');});
+  document.querySelector('.dur-radio-label').classList.add('checked');
+  document.getElementById('dov').className='dur-other-wrap';
+  document.getElementById('out-wrap').style.display='none';
+  document.getElementById('po').innerHTML='';
+  document.getElementById('tb-class').textContent='';
+  document.getElementById('bal-box').classList.remove('show');
+  refresh();window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+addPhase();
+</script>
+</body>
+</html>
