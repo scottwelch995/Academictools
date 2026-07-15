@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Block Phase Planner</title>
+<title>Block Planner</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -185,7 +185,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 </head>
 <body>
 <div id="topbar">
-  <span class="tag">Block Phase Planner</span>
+  <span class="tag">Block Planner</span>
   <span class="tag" id="tb-class" style="color:rgba(255,255,255,.4);font-style:italic"></span>
 </div>
 <div id="sb">
@@ -199,7 +199,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 <div class="card">
   <div class="card-hdr">
     <div class="eyebrow">Teacher Planning Tool</div>
-    <div class="card-title">Block Phase Planner</div>
+    <div class="card-title">Block Planner</div>
     <div class="card-sub">Plan your block period phase by phase. Clock times update live as you build. Generate a lesson roadmap to take to class.</div>
   </div>
   <div class="card-body">
@@ -207,15 +207,35 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
       <div class="slbl">Class Information</div>
       <div class="meta-grid">
         <div class="mf mfull"><label>Class Name / Subject</label><input type="text" id="cn" placeholder="e.g. Junior Rhetoric · 8th Grade Logic · Ancient Literature" oninput="onHdr()"></div>
-        <div class="mf"><label>Period</label>
-          <select id="per" onchange="onHdr()"><option value="">— Select —</option><option>Block 1</option><option>Block 2</option><option>Block 3</option><option>Block 4</option><option>Block 5</option><option>Block 6</option><option>Block 7</option><option>Block 8</option></select>
+
+        <div class="mf" id="field-per" style="display:none"><label>Period</label>
+          <select id="per" onchange="onPerChange()"><option value="">— Select —</option><option>Block 1</option><option>Block 2</option><option>Block 3</option><option>Block 4</option><option>Block 5</option><option>Block 6</option><option>Block 7</option><option>Block 8</option></select>
         </div>
-        <div class="mf"><label>Start Time</label><input type="time" id="st" oninput="refresh()"></div>
-        <div class="mf"><label>Date</label><input type="date" id="ld"></div>
-        <div class="mf mfull"><label>Lesson Topic</label><input type="text" id="lt" placeholder="e.g. Aeneid Book 2 · Persian Wars · Systems of Equations"></div>
+
+        <div class="mf mfull" id="field-st" style="display:none">
+          <label>Start Time <span style="color:#c04040;font-size:12px;">★ Auto-filled from block — change if Monday</span></label>
+          <div style="display:inline-flex;border:1px solid var(--rule);border-radius:7px;overflow:hidden;background:var(--off);">
+            <select id="st-hr" onchange="onHdr()" style="padding:11px 10px;border:none;border-right:1px solid var(--rule);font-family:Georgia,serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
+              <option value="">Hr</option>
+              <option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>1</option><option>2</option><option>3</option><option>4</option>
+            </select>
+            <select id="st-min" onchange="onHdr()" style="padding:11px 10px;border:none;border-right:1px solid var(--rule);font-family:Georgia,serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
+              <option value="">Min</option>
+              <option>00</option><option>05</option><option>10</option><option>15</option><option>20</option><option>25</option><option>30</option><option>35</option><option>40</option><option>45</option><option>50</option><option>55</option>
+            </select>
+            <select id="st-ap" onchange="onHdr()" style="padding:11px 10px;border:none;font-family:Georgia,serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
+              <option value="">—</option>
+              <option>AM</option><option>PM</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mf" id="field-ld" style="display:none"><label>Date <span style="font-size:12px;color:var(--inkl);font-style:italic;">(optional)</span></label><input type="date" id="ld"></div>
+
+        <div class="mf mfull" id="field-lt" style="display:none"><label>Lesson Topic <span style="font-size:12px;color:var(--inkl);font-style:italic;">(optional)</span></label><input type="text" id="lt" placeholder="e.g. Aeneid Book 2 · Persian Wars · Systems of Equations"></div>
       </div>
     </div>
-    <div>
+    <div id="field-dur" style="display:none">
       <div class="slbl">Block Duration</div>
       <div class="dur-radios" id="dur-radios">
         <label class="dur-radio-label checked" onclick="setDur(75,this)"><input type="radio" name="dur" value="75" checked>75 min</label>
@@ -234,6 +254,10 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 <div class="card">
   <div class="card-body">
     <div class="slbl">Lesson Phases</div>
+    <div id="phases-locked" style="background:var(--gold-pale);border:1px solid var(--gold);border-radius:var(--radius);padding:16px 18px;font-size:15px;color:var(--gold-text);font-style:italic;text-align:center;">
+      Complete the class information above to begin building your lesson phases.
+    </div>
+    <div id="phases-unlocked" style="display:none;flex-direction:column;gap:18px;">
     <div class="phase-list" id="plist"></div>
     <div class="bal-box" id="bal-box">
       <div class="bal-title">Time Distribution — no judgment, just information</div>
@@ -244,6 +268,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
     <div class="over-warn" id="ow">⚠ Plan is over the block duration — reduce a phase duration or remove a phase before generating</div>
     <button class="add-btn" id="ab" onclick="addPhase()">+ Add Phase</button>
     <button class="gen-btn" id="gb" onclick="genPlan()">Generate Lesson Roadmap →</button>
+    </div><!-- end phases-unlocked -->
   </div>
 </div>
 
@@ -300,14 +325,59 @@ function setDur(val,lbl){
   refresh();
 }
 
-function startMin(){var v=document.getElementById('st').value;if(!v)return null;var p=v.split(':');return parseInt(p[0],10)*60+parseInt(p[1],10);}
+var BLOCK_SCHEDULE={
+  'Block 1':{hr:'8', min:'30',ap:'AM',dur:75},
+  'Block 2':{hr:'9', min:'55',ap:'AM',dur:75},
+  'Block 3':{hr:'12',min:'35',ap:'PM',dur:75},
+  'Block 4':{hr:'2', min:'00',ap:'PM',dur:75},
+  'Block 5':{hr:'8', min:'30',ap:'AM',dur:75},
+  'Block 6':{hr:'9', min:'55',ap:'AM',dur:75},
+  'Block 7':{hr:'12',min:'35',ap:'PM',dur:75},
+  'Block 8':{hr:'2', min:'00',ap:'PM',dur:75}
+};
+
+function onPerChange(){
+  var per=document.getElementById('per').value;
+  if(per&&BLOCK_SCHEDULE[per]){
+    var s=BLOCK_SCHEDULE[per];
+    document.getElementById('st-hr').value=s.hr;
+    document.getElementById('st-min').value=s.min;
+    document.getElementById('st-ap').value=s.ap;
+    document.querySelectorAll('.dur-radio-label').forEach(function(l){l.classList.remove('checked');});
+    var match=document.querySelector('.dur-radio-label input[value="'+s.dur+'"]');
+    if(match)match.closest('.dur-radio-label').classList.add('checked');
+    document.getElementById('dov').className='dur-other-wrap';
+  }
+  onHdr();
+}
+
+function startMin(){
+  var hr=document.getElementById('st-hr').value;
+  var mn=document.getElementById('st-min').value;
+  var ap=document.getElementById('st-ap').value;
+  if(!hr||mn===''||mn==='Min'||!ap||ap==='—')return null;
+  var h=parseInt(hr,10),m=parseInt(mn,10);
+  if(ap==='PM'&&h!==12)h+=12;
+  if(ap==='AM'&&h===12)h=0;
+  return h*60+m;
+}
+
+function getStValue(){
+  var hr=document.getElementById('st-hr').value;
+  var mn=document.getElementById('st-min').value;
+  var ap=document.getElementById('st-ap').value;
+  if(!hr||!mn||mn==='Min'||!ap||ap==='—')return '';
+  return hr+':'+mn+' '+ap;
+}
 function fmtT(m){var h=Math.floor(m/60),mn=m%60,ap=h>=12?'PM':'AM',h12=h%12||12;return h12+':'+(mn<10?'0':'')+mn+' '+ap;}
 function pMins(id){var s=document.getElementById('ts-'+id);if(!s)return 0;if(s.value==='c'){var ci=document.getElementById('tc-'+id);return ci?parseInt(ci.value,10)||0:0;}return parseInt(s.value,10)||0;}
 function pAct(id){
   var sel=document.querySelector('#ag-'+id+' .act-btn.sel');
   if(sel)return{label:sel.dataset.act,type:sel.dataset.type};
-  var oth=document.getElementById('ao-'+id);
-  if(oth&&oth.value.trim()&&oth.classList.contains('actv'))return{label:oth.value.trim(),type:'n'};
+  var others=document.querySelectorAll('#ag-'+id+' .act-other');
+  for(var i=0;i<others.length;i++){
+    if(others[i].value.trim()&&others[i].classList.contains('actv'))return{label:others[i].value.trim(),type:'n'};
+  }
   return null;
 }
 function pStart(idx){var sm=startMin();if(sm===null)return null;for(var i=0;i<idx;i++)sm+=pMins(phases[i].id);return sm;}
@@ -355,7 +425,29 @@ function refresh(){
   markChanged();
 }
 
-function onHdr(){var cn=document.getElementById('cn').value.trim();var tb=document.getElementById('tb-class');if(tb)tb.textContent=cn;refresh();}
+function onHdr(){
+  var cn=document.getElementById('cn').value.trim();
+  var per=document.getElementById('per').value;
+  var st=getStValue();
+
+  // Progressive reveal
+  document.getElementById('field-per').style.display = cn ? '' : 'none';
+  document.getElementById('field-st').style.display  = (cn && per) ? '' : 'none';
+  document.getElementById('field-ld').style.display  = (cn && per && st) ? '' : 'none';
+  document.getElementById('field-lt').style.display  = (cn && per && st) ? '' : 'none';
+  document.getElementById('field-dur').style.display = (cn && per && st) ? '' : 'none';
+
+  // Unlock phases only when name + period + time are all filled
+  var ready = cn && per && st;
+  document.getElementById('phases-locked').style.display   = ready ? 'none' : '';
+  var pu = document.getElementById('phases-unlocked');
+  pu.style.display = ready ? 'flex' : 'none';
+
+  // Update topbar
+  var tb=document.getElementById('tb-class');if(tb)tb.textContent=cn;
+
+  refresh();
+}
 
 function buildCatHTML(id){
   var html='<div id="ag-'+id+'">';
@@ -367,9 +459,9 @@ function buildCatHTML(id){
       var dc=it[1]==='s'?'ds':it[1]==='t'?'dt':'dn';
       html+='<button class="act-btn" data-act="'+esc(it[0])+'" data-type="'+it[1]+'" onclick="selAct('+id+',this)" type="button"><span class="adot '+dc+'"></span>'+esc(it[0])+'</button>';
     });
+    html+='<input class="act-other" id="ao-'+id+'-'+ci+'" type="text" placeholder="Other — describe your own activity..." oninput="selOther('+id+',this,\''+ci+'\')" onfocus="selOther('+id+',this,\''+ci+'\')">';
     html+='</div></div>';
   });
-  html+='<input class="act-other" id="ao-'+id+'" type="text" placeholder="Other — describe this phase..." oninput="selOther('+id+',this)" onfocus="selOther('+id+',this)">';
   html+='</div>';
   html+='<div class="sel-display" id="sd-'+id+'" onclick="clearSel('+id+')">';
   html+='<span class="sel-display-text" id="sdt-'+id+'"></span>';
@@ -402,8 +494,10 @@ function selAct(id,btn){
   refresh();
 }
 
-function selOther(id,inp){
+function selOther(id,inp,ci){
+  // Clear all act buttons and all other inputs in this phase
   document.querySelectorAll('#ag-'+id+' .act-btn').forEach(function(b){b.classList.remove('sel');});
+  document.querySelectorAll('#ag-'+id+' .act-other').forEach(function(i){if(i!==inp){i.value='';i.classList.remove('actv');}});
   inp.classList.toggle('actv',!!inp.value.trim());
   if(inp.value.trim()){
     var ag=document.getElementById('ag-'+id);ag.style.display='none';
@@ -417,7 +511,7 @@ function clearSel(id){
   var ag=document.getElementById('ag-'+id);ag.style.display='';
   var sd=document.getElementById('sd-'+id);if(sd)sd.classList.remove('show');
   document.querySelectorAll('#ag-'+id+' .act-btn').forEach(function(b){b.classList.remove('sel');});
-  var oth=document.getElementById('ao-'+id);if(oth){oth.value='';oth.classList.remove('actv');}
+  document.querySelectorAll('#ag-'+id+' .act-other').forEach(function(i){i.value='';i.classList.remove('actv');});
   togClosing(id,null);refresh();
 }
 
@@ -467,6 +561,7 @@ function buildPlanData(){
   var per=document.getElementById('per').value;
   var top=document.getElementById('lt').value.trim();
   var tot=totDur(),sm2=startMin();
+  var stDisplay=getStValue();
   var dateRaw=document.getElementById('ld').value,dateStr='';
   if(dateRaw){var d=new Date(dateRaw+'T12:00:00');dateStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});}
   var used=0,sMin=0,tMin=0,phCnt=0,cursor=sm2;
@@ -482,7 +577,7 @@ function buildPlanData(){
   });
   var buf=tot-used;
   var bufClk='';if(cursor!==null&&buf>0)bufClk=fmtT(cursor)+' – '+fmtT(cursor+buf);
-  return{cn:cn,per:per,top:top,tot:tot,sm2:sm2,dateStr:dateStr,used:used,sMin:sMin,tMin:tMin,phCnt:phCnt,buf:buf,bufClk:bufClk,rows:rows};
+  return{cn:cn,per:per,top:top,tot:tot,sm2:sm2,stDisplay:stDisplay,dateStr:dateStr,used:used,sMin:sMin,tMin:tMin,phCnt:phCnt,buf:buf,bufClk:bufClk,rows:rows};
 }
 
 function genPlan(){
@@ -490,7 +585,7 @@ function genPlan(){
   var html='';
   html+='<div class="plan-hdr-box"><div class="plan-class">'+esc(D.cn)+(D.top?' — '+esc(D.top):'')+'</div><div class="plan-meta">';
   if(D.per)html+=esc(D.per)+'&nbsp;·&nbsp;';
-  if(D.sm2!==null)html+=fmtT(D.sm2)+'&nbsp;·&nbsp;';
+  if(D.stDisplay)html+=esc(D.stDisplay)+'&nbsp;·&nbsp;';
   html+=D.tot+' min block';if(D.dateStr)html+='&nbsp;·&nbsp;'+D.dateStr;html+='</div></div>';
   html+='<table class="otbl"><thead><tr><th>Clock Time</th><th>Activity & Content</th><th style="text-align:center;white-space:nowrap">Duration</th></tr></thead><tbody>';
   D.rows.forEach(function(r){
@@ -527,7 +622,7 @@ function genPlan(){
 function plainText(){
   var D=buildPlanData();
   var txt=D.cn+(D.top?' — '+D.top:'')+'\n';
-  if(D.per)txt+=D.per+'  ';if(D.sm2!==null)txt+=fmtT(D.sm2)+'  ';txt+=D.tot+' min\n';
+  if(D.per)txt+=D.per+'  ';if(D.stDisplay)txt+=D.stDisplay+'  ';txt+=D.tot+' min\n';
   if(D.dateStr)txt+=D.dateStr+'\n';txt+='\n';
   D.rows.forEach(function(r){
     txt+='Phase '+r.num+' — '+r.act+'  ('+r.m+' min)  '+(r.clk||'')+'\n';
@@ -558,8 +653,16 @@ function resetAll(){
   if(!confirm('Clear this entire plan? This cannot be undone.'))return;
   phases=[];pid=0;planGenerated=false;
   document.getElementById('plist').innerHTML='';
-  ['cn','lt','st','ld'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['cn','lt','ld'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  ['st-hr','st-min','st-ap'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
   document.getElementById('per').value='';
+  document.getElementById('field-per').style.display='none';
+  document.getElementById('field-st').style.display='none';
+  document.getElementById('field-ld').style.display='none';
+  document.getElementById('field-lt').style.display='none';
+  document.getElementById('field-dur').style.display='none';
+  document.getElementById('phases-locked').style.display='';
+  document.getElementById('phases-unlocked').style.display='none';
   document.querySelectorAll('.dur-radio-label').forEach(function(l){l.classList.remove('checked');});
   document.querySelector('.dur-radio-label').classList.add('checked');
   document.getElementById('dov').className='dur-other-wrap';
