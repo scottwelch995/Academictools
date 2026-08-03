@@ -11,7 +11,7 @@
   --white:#fff;--off:#f8f7f4;--rule:#e0d8cc;--ink:#1c1c1a;--inkl:#3a3830;
   --green-bg:#eef6ec;--radius:9px;
 }
-body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height:100vh;-webkit-text-size-adjust:100%}
+body{font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;background:var(--off);color:var(--ink);min-height:100vh;-webkit-text-size-adjust:100%}
 #topbar{background:var(--navy-dark);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:101;box-shadow:0 2px 8px rgba(0,0,0,.35)}
 #topbar .tag{color:rgba(255,255,255,.65);font-size:13px;letter-spacing:1px;text-transform:uppercase}
 #sb{position:sticky;top:42px;z-index:100;background:var(--navy);padding:7px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 2px 8px rgba(0,0,0,.3)}
@@ -37,7 +37,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:500px){.meta-grid{grid-template-columns:1fr}}
 .mf label{display:block;font-size:13px;color:var(--inkl);margin-bottom:5px}
-.mf input,.mf select{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:16px;background:var(--off);color:var(--ink);outline:none;-webkit-appearance:none;appearance:none}
+.mf input,.mf select{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:16px;background:var(--off);color:var(--ink);outline:none;-webkit-appearance:none;appearance:none}
 .mf input:focus,.mf select:focus{border-color:var(--navy)}
 .mfull{grid-column:1/-1}
 
@@ -49,7 +49,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 .dur-radio-label.checked{border-color:var(--navy);background:var(--navy);color:var(--white);font-weight:bold}
 .dur-other-wrap{display:none;align-items:center;gap:8px}
 .dur-other-wrap.show{display:flex}
-.dur-other-wrap input{width:72px;padding:8px 10px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:16px;background:var(--off);color:var(--ink);outline:none;text-align:center}
+.dur-other-wrap input{width:72px;padding:8px 10px;border:1px solid var(--rule);border-radius:7px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:16px;background:var(--off);color:var(--ink);outline:none;text-align:center}
 .dur-other-wrap label{font-size:14px;color:var(--inkl)}
 .dur-note{font-size:13px;color:var(--gold-text);font-style:italic;line-height:1.5;background:var(--gold-pale);border-left:3px solid var(--gold);padding:8px 12px;border-radius:0 6px 6px 0}
 
@@ -68,7 +68,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 
 /* Category accordion */
 .cat-group{border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--white);margin-bottom:6px}
-.cat-btn{width:100%;padding:11px 14px;background:var(--white);border:none;font-family:Georgia,serif;font-size:15px;font-weight:bold;color:var(--navy);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent;transition:background .13s}
+.cat-btn{width:100%;padding:11px 14px;background:var(--white);border:none;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:bold;color:var(--navy);cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;-webkit-tap-highlight-color:transparent;transition:background .13s}
 .cat-btn:hover{background:var(--off)}
 .cat-btn.open{background:var(--navy);color:var(--white)}
 .cat-arrow{font-size:12px;transition:transform .2s}
@@ -82,27 +82,27 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 .sel-display-text{font-size:14px;color:var(--white);font-weight:bold}
 .sel-display-change{font-size:12px;color:var(--gold);text-decoration:underline;white-space:nowrap}
 
-.act-btn{padding:10px 12px;border:2px solid var(--rule);border-radius:7px;background:var(--white);font-family:Georgia,serif;font-size:14px;color:var(--ink);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all .13s;-webkit-tap-highlight-color:transparent;line-height:1.35;width:100%}
+.act-btn{padding:10px 12px;border:2px solid var(--rule);border-radius:7px;background:var(--white);font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:14px;color:var(--ink);cursor:pointer;text-align:left;display:flex;align-items:center;gap:8px;transition:all .13s;-webkit-tap-highlight-color:transparent;line-height:1.35;width:100%}
 .act-btn:hover{border-color:var(--navy)}
 .adot{width:8px;height:8px;border-radius:50%;flex-shrink:0;opacity:.6}
 .ds{background:#4a9a40}.dt{background:#c8a84b}.dn{background:#8888aa}
-.act-other{width:100%;padding:10px 12px;border:2px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;-webkit-appearance:none;margin-top:4px}
+.act-other{width:100%;padding:10px 12px;border:2px solid var(--rule);border-radius:7px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:14px;background:var(--white);color:var(--ink);outline:none;-webkit-appearance:none;margin-top:4px}
 .act-other:focus,.act-other.actv{border-color:var(--navy)}
 
 .time-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .time-row label{font-size:13px;color:var(--inkl);white-space:nowrap}
-.tsel{padding:9px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:15px;background:var(--white);color:var(--ink);outline:none;-webkit-appearance:none;appearance:none;cursor:pointer}
+.tsel{padding:9px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:15px;background:var(--white);color:var(--ink);outline:none;-webkit-appearance:none;appearance:none;cursor:pointer}
 .tsel:focus{border-color:var(--navy)}
 .tcust{display:none;align-items:center;gap:6px}
 .tcust.show{display:flex}
-.tcust input{width:68px;padding:9px 10px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:15px;background:var(--white);color:var(--ink);outline:none;text-align:center;-webkit-appearance:none}
-.cta{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Georgia,serif;font-size:15px;background:var(--white);color:var(--ink);resize:none;outline:none;line-height:1.65;min-height:68px;-webkit-appearance:none}
+.tcust input{width:68px;padding:9px 10px;border:1px solid var(--rule);border-radius:7px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:15px;background:var(--white);color:var(--ink);outline:none;text-align:center;-webkit-appearance:none}
+.cta{width:100%;padding:10px 12px;border:1px solid var(--rule);border-radius:7px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:15px;background:var(--white);color:var(--ink);resize:none;outline:none;line-height:1.65;min-height:68px;-webkit-appearance:none}
 .cta:focus{border-color:var(--navy)}
 .closing-ex{background:var(--gold-pale);border:1px solid #e5d090;border-radius:7px;padding:14px;display:none;flex-direction:column;gap:12px}
 .closing-ex.show{display:flex}
 .clbl{font-size:12px;color:var(--gold-text);text-transform:uppercase;letter-spacing:1.5px;font-weight:bold}
 .cflbl{font-size:13px;color:var(--gold-text);margin-bottom:5px}
-.ceta{width:100%;padding:9px 11px;border:1px solid #e5d090;border-radius:7px;font-family:Georgia,serif;font-size:15px;background:var(--white);color:var(--ink);resize:none;outline:none;line-height:1.6;min-height:52px;-webkit-appearance:none}
+.ceta{width:100%;padding:9px 11px;border:1px solid #e5d090;border-radius:7px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:15px;background:var(--white);color:var(--ink);resize:none;outline:none;line-height:1.6;min-height:52px;-webkit-appearance:none}
 
 /* Balance */
 .bal-box{background:var(--navy);border-radius:var(--radius);padding:14px 18px;display:none;flex-direction:column;gap:10px}
@@ -116,14 +116,14 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 .bal-num{font-size:14px;color:rgba(255,255,255,.9);font-weight:bold;white-space:nowrap;min-width:55px;text-align:right}
 
 /* Buttons */
-.add-btn{width:100%;padding:13px;border:2px dashed var(--rule);border-radius:var(--radius);background:transparent;font-family:Georgia,serif;font-size:16px;color:var(--inkl);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.add-btn{width:100%;padding:13px;border:2px dashed var(--rule);border-radius:var(--radius);background:transparent;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:16px;color:var(--inkl);cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
 .add-btn:hover{border-color:var(--navy);color:var(--navy)}
 .add-btn:disabled{opacity:.35;cursor:not-allowed;border-color:var(--rule);color:var(--inkl)}
 .full-note{font-size:14px;color:#2a6a20;font-style:italic;text-align:center;display:none;padding:6px}
 .full-note.show{display:block}
 .over-warn{background:#fff8ec;border:1px solid var(--gold);border-radius:var(--radius);padding:12px 16px;font-size:15px;color:#7a5800;font-style:italic;display:none}
 .over-warn.show{display:block}
-.gen-btn{width:100%;padding:16px;background:var(--gold);color:var(--navy);border:none;border-radius:var(--radius);font-family:Georgia,serif;font-size:18px;font-weight:bold;cursor:pointer;display:none;-webkit-tap-highlight-color:transparent}
+.gen-btn{width:100%;padding:16px;background:var(--gold);color:var(--navy);border:none;border-radius:var(--radius);font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:bold;cursor:pointer;display:none;-webkit-tap-highlight-color:transparent}
 .gen-btn.show{display:block}
 
 /* Change banner */
@@ -136,7 +136,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 .out-hdr{background:var(--navy);padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .out-htitle{font-size:15px;color:var(--gold);font-weight:bold;text-transform:uppercase;letter-spacing:1px}
 .out-btns{display:flex;gap:8px;flex-wrap:wrap}
-.obtn{padding:8px 14px;border:none;border-radius:6px;font-family:Georgia,serif;font-size:13px;font-weight:bold;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
+.obtn{padding:8px 14px;border:none;border-radius:6px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:bold;cursor:pointer;-webkit-tap-highlight-color:transparent;white-space:nowrap}
 .obtn-gold{background:var(--gold);color:var(--navy)}
 .obtn-outline{background:transparent;border:1px solid rgba(255,255,255,.4);color:var(--white)}
 .obtn-outline:hover{border-color:var(--gold);color:var(--gold)}
@@ -166,7 +166,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 .si-s{border-left:3px solid #4a9a40}.si-t{border-left:3px solid var(--gold)}.si-b{border-left:3px solid #88aacc}.si-n{border-left:3px solid rgba(255,255,255,.3)}
 .action-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding-top:4px;align-items:flex-start}
 .action-col{display:flex;flex-direction:column;align-items:center;gap:10px;flex:1;min-width:160px;max-width:280px}
-.abtn{padding:13px 22px;border-radius:8px;font-family:Georgia,serif;font-size:16px;cursor:pointer;border:none;min-width:160px;text-align:center;width:100%;-webkit-tap-highlight-color:transparent}
+.abtn{padding:13px 22px;border-radius:8px;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:16px;cursor:pointer;border:none;min-width:160px;text-align:center;width:100%;-webkit-tap-highlight-color:transparent}
 .abtn-clear{background:var(--off);border:1px solid var(--rule)!important;color:var(--inkl)}
 .abtn-pdf{background:var(--gold);color:var(--navy);font-weight:bold}
 .ahint{font-size:13px;color:var(--inkl);line-height:1.55;text-align:center;font-style:italic}
@@ -215,15 +215,15 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
         <div class="mf mfull" id="field-st" style="display:none">
           <label>Start Time <span style="color:#c04040;font-size:12px;">★ Auto-filled from block — change if Monday</span></label>
           <div style="display:inline-flex;border:1px solid var(--rule);border-radius:7px;overflow:hidden;background:var(--off);">
-            <select id="st-hr" onchange="onHdr()" style="padding:11px 10px;border:none;border-right:1px solid var(--rule);font-family:Georgia,serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
+            <select id="st-hr" onchange="onHdr()" style="padding:11px 10px;border:none;border-right:1px solid var(--rule);font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
               <option value="">Hr</option>
               <option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>1</option><option>2</option><option>3</option><option>4</option>
             </select>
-            <select id="st-min" onchange="onHdr()" style="padding:11px 10px;border:none;border-right:1px solid var(--rule);font-family:Georgia,serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
+            <select id="st-min" onchange="onHdr()" style="padding:11px 10px;border:none;border-right:1px solid var(--rule);font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
               <option value="">Min</option>
               <option>00</option><option>05</option><option>10</option><option>15</option><option>20</option><option>25</option><option>30</option><option>35</option><option>40</option><option>45</option><option>50</option><option>55</option>
             </select>
-            <select id="st-ap" onchange="onHdr()" style="padding:11px 10px;border:none;font-family:Georgia,serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
+            <select id="st-ap" onchange="onHdr()" style="padding:11px 10px;border:none;font-family:Avenir,'Avenir Next','Helvetica Neue',Arial,sans-serif;font-size:17px;background:var(--off);color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:auto;appearance:auto;">
               <option value="">—</option>
               <option>AM</option><option>PM</option>
             </select>
@@ -242,10 +242,11 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
         <label class="dur-radio-label" onclick="setDur(60,this)"><input type="radio" name="dur" value="60">60 min</label>
         <label class="dur-radio-label" onclick="setDur(55,this)"><input type="radio" name="dur" value="55">55 min</label>
         <label class="dur-radio-label" onclick="setDur(45,this)"><input type="radio" name="dur" value="45">45 min</label>
+        <label class="dur-radio-label" onclick="setDur(35,this)"><input type="radio" name="dur" value="35">35 min</label>
         <label class="dur-radio-label" onclick="setDur('other',this)"><input type="radio" name="dur" value="other">Other</label>
       </div>
       <div class="dur-other-wrap" id="dov"><input type="number" id="dc" min="10" max="180" placeholder="min" oninput="refresh()"><label>minutes</label></div>
-      <div class="dur-note">⚠ Monday blocks are 60 minutes · Tuesday–Friday standard blocks are 75 minutes · Remember to update this before planning.</div>
+      <div class="dur-note">⚠ Monday blocks are 35 minutes · Tuesday–Friday standard blocks are 75 minutes · Remember to update this before planning.</div>
     </div>
   </div>
 </div>
@@ -302,7 +303,7 @@ body{font-family:Georgia,serif;background:var(--off);color:var(--ink);min-height
 var phases=[],pid=0,customDur=75,planGenerated=false;
 
 var CATS=[
-  {label:'Opening & Closing',items:[['Opening Prayer & Devotion','n'],['Closing, Homework & Planner','n']]},
+  {label:'Opening & Closing',items:[['Opening Prayer & Devotion','n'],['Do Now / Bell Ringer / Warm-Up','s'],['Closing, Homework & Planner','n']]},
   {label:'Instruction',items:[['Direct Instruction','t'],['Read Aloud','t'],['Primary Source Reading','s'],['Demonstration','t']]},
   {label:'Discussion',items:[['Socratic Discussion','s'],['Partner Discussion','s'],['Group Work','s'],['Debate','s']]},
   {label:'Student Work',items:[['Student Practice & Application','s'],['Written Response','s'],['Student Presentations','s'],['Retrieval Practice','s']]},
