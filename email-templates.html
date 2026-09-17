@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Email Templates</title>
+<style>
+  :root {
+    --navy: #002B5C;
+    --navy-light: #0F3D73;
+    --blue: #6CAEDF;
+    --blue-soft: #E4F0FA;
+    --gray: #C8C8C8;
+    --gray-light: #E6E6E6;
+    --paper: #FBFBF9;
+    --ink: #1C232C;
+    --ink-soft: #5A6472;
+    --good: #2E7D4F;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #12181F;
+      --gray-light: #1D242D;
+      --ink: #EDEFF2;
+      --ink-soft: #A6AFBB;
+      --blue-soft: #17293A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #12181F;
+    --gray-light: #1D242D;
+    --ink: #EDEFF2;
+    --ink-soft: #A6AFBB;
+    --blue-soft: #17293A;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--gray-light);
+    color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .frame {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+  }
+
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  header.top .mark {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 22px;
+    color: var(--navy);
+    font-weight: 700;
+  }
+  header.top .mark span { color: var(--blue); }
+  header.top .tag { font-size: 13px; color: var(--ink-soft); }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 230px 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+  @media (max-width: 980px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  nav.cats {
+    background: var(--paper);
+    border-radius: 10px;
+    border: 1px solid var(--gray);
+    overflow: hidden;
+  }
+  nav.cats button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 13px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--gray-light);
+    font-size: 14.5px;
+    color: var(--ink);
+    cursor: pointer;
+    font-family: inherit;
+    line-height: 1.3;
+  }
+  nav.cats button:last-child { border-bottom: none; }
+  nav.cats button:hover { background: var(--blue-soft); }
+  nav.cats button.active { background: var(--navy); color: white; font-weight: 600; }
+  nav.cats button .sub { display: block; font-size: 12px; font-weight: 400; color: var(--ink-soft); margin-top: 2px; }
+  nav.cats button.active .sub { color: var(--blue); }
+
+  .card {
+    background: var(--paper);
+    border-radius: 10px;
+    border: 1px solid var(--gray);
+    padding: 22px 24px 20px;
+    min-height: 420px;
+  }
+
+  .card h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19px;
+    color: var(--navy);
+    margin: 0 0 4px;
+  }
+  .card > p.desc {
+    margin: 0 0 16px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--gray-light);
+  }
+
+  .field-label {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 12px 0 5px;
+    font-weight: 600;
+  }
+  .field-row { display: flex; gap: 10px; }
+  .field-row > div { flex: 1; }
+
+  input[type=text], input[type=date], textarea, select {
+    width: 100%;
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--gray-light);
+    border: 1px solid var(--gray);
+    border-radius: 7px;
+    padding: 9px 11px;
+    line-height: 1.4;
+  }
+  select { cursor: pointer; }
+  input:focus, textarea:focus, select:focus {
+    outline: 2px solid var(--blue);
+    outline-offset: 1px;
+    background: var(--paper);
+  }
+
+  .repeat-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 6px;
+    align-items: center;
+  }
+  .repeat-row input { flex: 1; }
+  .repeat-row button.remove {
+    flex: 0 0 auto;
+    background: transparent;
+    border: 1px solid var(--gray);
+    border-radius: 6px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 6px 9px;
+    font-size: 13px;
+  }
+  .add-row {
+    margin-top: 4px;
+    font-size: 13px;
+    background: transparent;
+    border: none;
+    color: var(--navy-light);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+
+  .out-body {
+    font-family: Georgia, "Times New Roman", serif;
+    min-height: 300px;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  button.primary, button.ghost {
+    font-family: -apple-system, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+  button.primary { background: var(--navy); color: white; }
+  button.primary:hover { background: var(--navy-light); }
+  button.ghost { background: transparent; border-color: var(--gray); color: var(--ink); }
+  button.ghost:hover { background: var(--blue-soft); border-color: var(--blue); }
+  .copied-msg { font-size: 13px; color: var(--good); font-weight: 600; opacity: 0; transition: opacity .15s; }
+  .copied-msg.show { opacity: 1; }
+
+  .note {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+
+  <header class="top">
+    <div class="mark">Hill Country <span>&middot;</span> Parent Email Templates</div>
+    <div class="tag">Office of Academics</div>
+  </header>
+
+  <div class="layout">
+    <nav class="cats" id="catNav"></nav>
+
+    <div class="card">
+      <h1 id="formTitle">Late Assignment</h1>
+      <p class="desc" id="formDesc"></p>
+      <div id="formFields"></div>
+      <div class="actions">
+        <button class="primary" id="genBtn">Generate email</button>
+        <button class="ghost" id="shuffleBtn" style="display:none;">Try another version</button>
+      </div>
+      <div class="note" id="variantNote"></div>
+    </div>
+
+    <div class="card">
+      <h1>Preview</h1>
+      <p class="desc">Edit anything below before you copy it.</p>
+      <div class="field-label">Subject line</div>
+      <input type="text" id="subjectField">
+      <div class="field-label">Email body</div>
+      <textarea class="out-body" id="bodyField"></textarea>
+      <div class="actions">
+        <button class="primary" id="copyBtn">Copy email</button>
+        <span class="copied-msg" id="copiedMsg">Copied</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PRONOUNS = {
+  he:   { label: "He / him / his",  subj: "He",  obj: "him", poss: "his", has: "has", was: "was", is: "is" },
+  she:  { label: "She / her / her", subj: "She", obj: "her", poss: "her", has: "has", was: "was", is: "is" }
+};
+
+function lc(s){ return s ? s.charAt(0).toLowerCase() + s.slice(1) : s; }
+function fallback(val, bracket){ return (val && val.trim()) ? val.trim() : bracket; }
+function pron(key){ return PRONOUNS[key] || PRONOUNS.he; }
+function greeting(d){ return (d.parent && d.parent.trim()) ? `Hi ${d.parent.trim()},\n\n` : ""; }
+// For free-text fields inserted mid-sentence: lowercase the first letter and strip
+// any trailing period the teacher typed, so it reads correctly wherever it lands.
+function mid(val, bracket){
+  let v = fallback(val, bracket);
+  v = v.replace(/\.+\s*$/, '');
+  return lc(v);
+}
+const PARENT_FIELD = { key: "parent", label: "Parent/guardian name (optional)", type: "text", placeholder: "e.g. Mrs. Anderson" };
+
+// ---------- category definitions ----------
+
+const categories = [
+  {
+    id: "encouraging",
+    label: "Encouraging Note",
+    sub: "Positive note home",
+    desc: "A quick, genuine note home. Describe what the student did well in a few words — past tense works best (e.g. \"helped a classmate without being asked\").",
+    hasVariants: true,
+    fields: [
+      { key: "name", label: "Student name", type: "text", placeholder: "e.g. Emma" },
+      { key: "pronoun", label: "Pronoun", type: "pronoun" },
+      PARENT_FIELD,
+      { key: "detail", label: "Finish this sentence: \"[Name] has been ___\"", type: "text", placeholder: "e.g. helpful to a classmate who was struggling" },
+      { key: "teacher", label: "Your name", type: "text", placeholder: "e.g. Mrs. Carter" }
+    ],
+    variants: [
+      (d) => `${greeting(d)}I wanted to take a moment to tell you how much I've enjoyed having ${d.name} in class. ${d.p.subj} ${d.p.has} been ${mid(d.detail,"[specific quality — engaged, kind, hardworking]")} lately, and it hasn't gone unnoticed.\n\nKeep up the great work at home — it shows.\n\nSincerely,\n${d.teacher}`,
+      (d) => `${greeting(d)}I wanted to brag on ${d.name} a bit. ${d.p.subj} ${d.p.has} been ${mid(d.detail,"[specific quality]")} this week, and it was a joy to see.\n\nThank you for raising a student like this.\n\nSincerely,\n${d.teacher}`,
+      (d) => `${greeting(d)}Just a quick note to celebrate ${d.name}. ${d.p.subj} ${d.p.has} been ${mid(d.detail,"[specific quality or growth]")}, and I'm proud of what I'm seeing in class.\n\nGreat job, ${d.name}!\n\nSincerely,\n${d.teacher}`,
+      (d) => `${greeting(d)}I don't always get to send notes like this, so I wanted to make sure I did today. ${d.p.subj} ${d.p.has} been ${mid(d.detail,"[specific quality]")}, and I wanted you to know.\n\nThank you for your partnership.\n\nSincerely,\n${d.teacher}`
+    ],
+    subject: (d) => `A note about ${d.name}`,
+    body: (d, variantIndex) => categories.find(c=>c.id==="encouraging").variants[variantIndex](d)
+  },
+  {
+    id: "late",
+    label: "Late Assignment",
+    sub: "One missing item",
+    desc: "For a single late assignment — a light, quick nudge home.",
+    fields: [
+      { key: "name", label: "Student name", type: "text", placeholder: "e.g. Jack" },
+      { key: "pronoun", label: "Pronoun", type: "pronoun" },
+      PARENT_FIELD,
+      { key: "course", label: "Course", type: "text", placeholder: "e.g. Algebra I" },
+      { key: "assignment", label: "Assignment name", type: "text", placeholder: "e.g. Chapter 4 Problem Set" },
+      { key: "due", label: "Due date", type: "text", placeholder: "e.g. Sept 12" },
+      { key: "teacher", label: "Your name", type: "text", placeholder: "e.g. Mr. Alvarez" }
+    ],
+    subject: (d) => `${d.name} — Missing Assignment: ${fallback(d.assignment,"[Assignment Name]")}`,
+    body: (d) => `${greeting(d)}${d.name} ${d.p.has} not yet submitted ${fallback(d.assignment,"[Assignment Name]")} for ${fallback(d.course,"[Course]")}, which was due ${fallback(d.due,"[Due Date]")}.\n\nWould you please encourage ${d.p.obj} to turn this in as soon as possible? If something is getting in the way, I'm glad to help.\n\nSincerely,\n${d.teacher}`
+  },
+  {
+    id: "missing",
+    label: "Missing Assignments",
+    sub: "Multiple items",
+    desc: "For a pattern of missing work. Add each assignment below.",
+    fields: [
+      { key: "name", label: "Student name", type: "text", placeholder: "e.g. Sophie" },
+      { key: "pronoun", label: "Pronoun", type: "pronoun" },
+      PARENT_FIELD,
+      { key: "course", label: "Course", type: "text", placeholder: "e.g. World History" },
+      { key: "teacher", label: "Your name", type: "text", placeholder: "e.g. Mrs. Diaz" }
+    ],
+    repeatable: { key: "assignments", rowLabel: "Assignment", cols: ["Assignment name","Due date"], min: 2 },
+    subject: (d) => `${d.name} — Missing Work Update: ${fallback(d.course,"[Course]")}`,
+    body: (d) => {
+      const rows = (d.assignments || []).filter(r => r[0] || r[1]);
+      const list = rows.length
+        ? rows.map(r => `- ${fallback(r[0],"[Assignment]")}${r[1] ? " — due " + r[1] : ""}`).join("\n")
+        : "- [Assignment 1]\n- [Assignment 2]";
+      const count = rows.length || "[Number]";
+      return `${greeting(d)}I wanted to flag that ${d.name} currently ${d.p.has} ${count} missing assignment(s) in ${fallback(d.course,"[Course]")}:\n\n${list}\n\nGetting these turned in will help keep ${d.p.poss} grade on track. Please let me know if I can help in any way.\n\nSincerely,\n${d.teacher}`;
+    }
+  },
+  {
+    id: "failed",
+    label: "Failed Assignment / Test",
+    sub: "Single low score",
+    desc: "For one assignment or test grade that came in low.",
+    fields: [
+      { key: "name", label: "Student name", type: "text", placeholder: "e.g. Owen" },
+      { key: "pronoun", label: "Pronoun", type: "pronoun" },
+      PARENT_FIELD,
+      { key: "course", label: "Course", type: "text", placeholder: "e.g. Biology" },
+      { key: "assignment", label: "Assignment / test name", type: "text", placeholder: "e.g. Chapter 6 Test" },
+      { key: "score", label: "Score", type: "text", placeholder: "e.g. 61%" },
+      { key: "reason", label: "Context (optional)", type: "text", placeholder: "e.g. Missed several vocabulary terms" },
+      { key: "teacher", label: "Your name", type: "text", placeholder: "e.g. Mr. Kim" }
+    ],
+    subject: (d) => `${d.name} — ${fallback(d.assignment,"[Assignment/Test Name]")} Results`,
+    body: (d) => `Grade Update: ${fallback(d.assignment,"[Assignment/Test Name]")}\n\n${greeting(d)}${d.name} recently received a ${fallback(d.score,"[Grade/%]")} on ${fallback(d.assignment,"[Assignment/Test Name]")} in ${fallback(d.course,"[Course]")}.\n\n${d.reason ? d.reason.trim() + "\n\n" : ""}I'd like to help ${d.p.obj} shore this up before it comes up again. If you'd like to talk through some options, I'm happy to connect.\n\nSincerely,\n${d.teacher}`
+  },
+  {
+    id: "dresscode",
+    label: "Dress Code Violation",
+    sub: "Friendly reminder",
+    desc: "A light, no-drama reminder — not a disciplinary notice.",
+    fields: [
+      { key: "name", label: "Student name", type: "text", placeholder: "e.g. Noah" },
+      { key: "pronoun", label: "Pronoun", type: "pronoun" },
+      PARENT_FIELD,
+      { key: "issue", label: "Specific issue", type: "text", placeholder: "e.g. untucked shirt" },
+      { key: "teacher", label: "Your name", type: "text", placeholder: "e.g. Mrs. Patel" }
+    ],
+    subject: (d) => `${d.name} — Dress Code Reminder`,
+    body: (d) => `${greeting(d)}${d.name} ${d.p.was} out of dress code today (${mid(d.issue,"[specific issue]")}).\n\nThis is just a friendly reminder — no action needed beyond keeping an eye on this going forward. Thank you for your partnership.\n\nSincerely,\n${d.teacher}`
+  },
+  {
+    id: "fnotice",
+    label: "F-Notice",
+    sub: "Grade risk, end of quarter",
+    desc: "Send about three weeks before the quarter ends when a student has or is at risk of an F.",
+    fields: [
+      { key: "name", label: "Student name", type: "text", placeholder: "e.g. Ava" },
+      { key: "pronoun", label: "Pronoun", type: "pronoun" },
+      PARENT_FIELD,
+      { key: "course", label: "Course", type: "text", placeholder: "e.g. Geometry" },
+      { key: "letter", label: "Letter grade", type: "text", placeholder: "e.g. F" },
+      { key: "pct", label: "Percentage", type: "text", placeholder: "e.g. 68.2" },
+      { key: "eoq", label: "End of quarter date", type: "text", placeholder: "e.g. June 14" },
+      { key: "reason", label: "Reason for grade", type: "text", placeholder: "e.g. a low test grade" },
+      { key: "teacher", label: "Your name", type: "text", placeholder: "e.g. Mr. Foster" }
+    ],
+    repeatable: { key: "assessments", rowLabel: "Upcoming assessment (optional)", cols: ["Assessment name","Date"], min: 1 },
+    subject: (d) => `${d.name} — Grade Update: ${fallback(d.course,"[Course]")}`,
+    body: (d) => {
+      const rows = (d.assessments || []).filter(r => r[0] || r[1]);
+      let upcoming = "";
+      if (rows.length) {
+        const list = rows.map(r => `- ${fallback(r[0],"[Assessment]")}${r[1] ? " — " + r[1] : ""}`).join("\n");
+        upcoming = `Upcoming:\n${list}\n\n`;
+      }
+      const pctText = d.pct ? d.pct.trim().replace("%","") + "%" : "[%]";
+      return `Grade Update: ${fallback(d.course,"[Course]")}\n\n${greeting(d)}As of today, ${d.name} ${d.p.is} receiving a grade of ${fallback(d.letter,"[Letter]")} (${pctText}) in ${fallback(d.course,"[Course]")}.\n\nThe grading period ends ${fallback(d.eoq,"[End of Quarter Date]")}.\n\nThis grade reflects ${mid(d.reason,"[reason]")}.\n\n${upcoming}If you'd like to talk about how to help ${d.name} improve this grade before the end of the quarter, I'm happy to connect.\n\nSincerely,\n${d.teacher}`;
+    }
+  }
+];
+
+let activeId = categories[0].id;
+let variantIndex = 0;
+
+const catNav = document.getElementById('catNav');
+const formTitle = document.getElementById('formTitle');
+const formDesc = document.getElementById('formDesc');
+const formFields = document.getElementById('formFields');
+const genBtn = document.getElementById('genBtn');
+const shuffleBtn = document.getElementById('shuffleBtn');
+const variantNote = document.getElementById('variantNote');
+const subjectField = document.getElementById('subjectField');
+const bodyField = document.getElementById('bodyField');
+const copyBtn = document.getElementById('copyBtn');
+const copiedMsg = document.getElementById('copiedMsg');
+
+function getCat(id){ return categories.find(c => c.id === id); }
+
+function renderNav(){
+  catNav.innerHTML = '';
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = cat.id === activeId ? 'active' : '';
+    btn.innerHTML = cat.label + '<span class="sub">' + cat.sub + '</span>';
+    btn.addEventListener('click', () => selectCategory(cat.id));
+    catNav.appendChild(btn);
+  });
+}
+
+function selectCategory(id){
+  activeId = id;
+  variantIndex = 0;
+  renderNav();
+  renderForm();
+  generate();
+}
+
+function pronounSelectHTML(id){
+  let opts = Object.keys(PRONOUNS).map(k => `<option value="${k}">${PRONOUNS[k].label}</option>`).join('');
+  return `<select id="f_${id}_pronoun">${opts}</select>`;
+}
+
+function renderForm(){
+  const cat = getCat(activeId);
+  formTitle.textContent = cat.label;
+  formDesc.textContent = cat.desc;
+  shuffleBtn.style.display = cat.hasVariants ? 'inline-block' : 'none';
+  variantNote.textContent = '';
+
+  let html = '';
+  cat.fields.forEach(f => {
+    html += `<div class="field-label">${f.label}</div>`;
+    if (f.type === 'pronoun') {
+      html += pronounSelectHTML(cat.id);
+    } else {
+      html += `<input type="text" id="f_${cat.id}_${f.key}" placeholder="${f.placeholder || ''}">`;
+    }
+  });
+
+  if (cat.repeatable) {
+    html += `<div class="field-label">${cat.repeatable.rowLabel}s</div><div id="rows_${cat.id}"></div><button type="button" class="add-row" id="addrow_${cat.id}">+ Add another</button>`;
+  }
+
+  formFields.innerHTML = html;
+
+  if (cat.repeatable) {
+    const rowsWrap = document.getElementById(`rows_${cat.id}`);
+    const addBtn = document.getElementById(`addrow_${cat.id}`);
+    function addRow(){
+      const row = document.createElement('div');
+      row.className = 'repeat-row';
+      row.innerHTML = cat.repeatable.cols.map(c => `<input type="text" placeholder="${c}">`).join('') +
+        `<button type="button" class="remove" title="Remove">&times;</button>`;
+      row.querySelector('.remove').addEventListener('click', () => row.remove());
+      rowsWrap.appendChild(row);
+    }
+    for (let i = 0; i < cat.repeatable.min; i++) addRow();
+    addBtn.addEventListener('click', addRow);
+  }
+}
+
+function collectData(cat){
+  const d = { p: pron(document.getElementById(`f_${cat.id}_pronoun`) ? document.getElementById(`f_${cat.id}_pronoun`).value : 'he') };
+  cat.fields.forEach(f => {
+    if (f.type === 'pronoun') return;
+    const el = document.getElementById(`f_${cat.id}_${f.key}`);
+    d[f.key] = el ? el.value : '';
+  });
+  d.name = fallback(d.name, "[Student Name]");
+  d.teacher = fallback(d.teacher, "[Teacher Name]");
+
+  if (cat.repeatable) {
+    const rowsWrap = document.getElementById(`rows_${cat.id}`);
+    const rows = [];
+    if (rowsWrap) {
+      rowsWrap.querySelectorAll('.repeat-row').forEach(r => {
+        const inputs = r.querySelectorAll('input');
+        rows.push([inputs[0].value, inputs[1].value]);
+      });
+    }
+    d[cat.repeatable.key] = rows;
+  }
+  return d;
+}
+
+function generate(){
+  const cat = getCat(activeId);
+  const d = collectData(cat);
+  subjectField.value = cat.subject(d);
+  bodyField.value = cat.hasVariants ? cat.body(d, variantIndex) : cat.body(d);
+  if (cat.hasVariants) {
+    variantNote.textContent = 'Version ' + (variantIndex + 1) + ' of ' + cat.variants.length;
+  } else {
+    variantNote.textContent = '';
+  }
+}
+
+genBtn.addEventListener('click', generate);
+
+shuffleBtn.addEventListener('click', () => {
+  const cat = getCat(activeId);
+  if (!cat.hasVariants) return;
+  variantIndex = (variantIndex + 1) % cat.variants.length;
+  generate();
+});
+
+copyBtn.addEventListener('click', async () => {
+  const text = 'Subject: ' + subjectField.value + '\n\n' + bodyField.value;
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  copiedMsg.classList.add('show');
+  setTimeout(() => copiedMsg.classList.remove('show'), 1600);
+});
+
+renderNav();
+renderForm();
+generate();
+</script>
+</body>
+</html>
