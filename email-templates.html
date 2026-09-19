@@ -212,6 +212,49 @@
     color: var(--ink-soft);
     margin-top: 10px;
   }
+
+  .toggle-row {
+    background: var(--blue-soft);
+    border: 1px solid var(--blue);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+  }
+  .toggle-row label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13.5px;
+    cursor: pointer;
+    line-height: 1.3;
+  }
+  .toggle-row input[type=checkbox] {
+    width: auto;
+    accent-color: var(--navy);
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 7px;
+  }
+  button.chip {
+    font-family: -apple-system, Arial, sans-serif;
+    font-size: 12.5px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--gray);
+    background: var(--gray-light);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  button.chip:hover { border-color: var(--blue); }
+  button.chip.active {
+    background: var(--navy);
+    border-color: var(--navy);
+    color: white;
+  }
 </style>
 </head>
 <body>
@@ -269,6 +312,29 @@ function mid(val, bracket){
   return lc(v);
 }
 const PARENT_FIELD = { key: "parent", label: "Parent/guardian name (optional)", type: "text", placeholder: "e.g. Mrs. Anderson" };
+
+// ---------- F-Notice specific state ----------
+let fnoticeIncludeNote = true; // default ON for this year
+let fnoticeReasons = [];       // up to 2 selected reason chips, in click order
+let fnoticeEoqVal = "";        // currently selected end-of-quarter date
+
+const FNOTICE_NOTE_TEXT = "We're working to communicate more clearly and earlier with families about how students are doing. Starting this quarter, that means sending an update like this whenever a student is at risk of failing \u2014 a few weeks out, while there's still real time to help before grades finalize.";
+
+const EOQ_DATES = [
+  { label: "Q1 \u2013 Oct 9, 2026", value: "October 9, 2026" },
+  { label: "Q2 \u2013 Dec 18, 2026", value: "December 18, 2026" },
+  { label: "Q3 \u2013 Mar 12, 2027", value: "March 12, 2027" },
+  { label: "Q4 \u2013 May 21, 2027", value: "May 21, 2027" }
+];
+
+const FNOTICE_REASONS = [
+  { label: "Poor/failing quiz & test grades", value: "poor or failing quiz and test grades" },
+  { label: "Missing homework", value: "missing homework assignments" },
+  { label: "Low-effort homework", value: "homework completed with low effort or accuracy" },
+  { label: "Missing/late major assignments", value: "missing or late major assignments" },
+  { label: "Limited participation", value: "limited participation and engagement in class" },
+  { label: "Inconsistent attendance", value: "inconsistent attendance" }
+];
 
 // ---------- category definitions ----------
 
@@ -381,7 +447,7 @@ const categories = [
       { key: "letter", label: "Letter grade", type: "text", placeholder: "e.g. F" },
       { key: "pct", label: "Percentage", type: "text", placeholder: "e.g. 68.2" },
       { key: "eoq", label: "End of quarter date", type: "text", placeholder: "e.g. June 14" },
-      { key: "reason", label: "Reason for grade", type: "text", placeholder: "e.g. a low test grade" },
+      { key: "reason", label: "Reason for grade (click below or type your own)", type: "text", placeholder: "e.g. a low test grade" },
       { key: "teacher", label: "Your name", type: "text", placeholder: "e.g. Mr. Foster" }
     ],
     repeatable: { key: "assessments", rowLabel: "Upcoming assessment (optional)", cols: ["Assessment name","Date"], min: 1 },
@@ -394,7 +460,8 @@ const categories = [
         upcoming = `Upcoming:\n${list}\n\n`;
       }
       const pctText = d.pct ? d.pct.trim().replace("%","") + "%" : "[%]";
-      return `Grade Update: ${fallback(d.course,"[Course]")}\n\n${greeting(d)}As of today, ${d.name} ${d.p.is} receiving a grade of ${fallback(d.letter,"[Letter]")} (${pctText}) in ${fallback(d.course,"[Course]")}.\n\nThe grading period ends ${fallback(d.eoq,"[End of Quarter Date]")}.\n\nThis grade reflects ${mid(d.reason,"[reason]")}.\n\n${upcoming}If you'd like to talk about how to help ${d.name} improve this grade before the end of the quarter, I'm happy to connect.\n\nSincerely,\n${d.teacher}`;
+      const noteBlock = fnoticeIncludeNote ? `${FNOTICE_NOTE_TEXT}\n\n` : "";
+      return `Grade Update: ${fallback(d.course,"[Course]")}\n\n${noteBlock}${greeting(d)}As of today, ${d.name} ${d.p.is} receiving a grade of ${fallback(d.letter,"[Letter]")} (${pctText}) in ${fallback(d.course,"[Course]")}.\n\nThe grading period ends ${fallback(d.eoq,"[End of Quarter Date]")}.\n\nThis grade reflects ${mid(d.reason,"[reason]")}.\n\n${upcoming}If you'd like to talk about how to help ${d.name} improve this grade before the end of the quarter, I'm happy to connect.\n\nSincerely,\n${d.teacher}`;
     }
   }
 ];
@@ -448,12 +515,29 @@ function renderForm(){
   variantNote.textContent = '';
 
   let html = '';
+
+  if (cat.id === 'fnotice') {
+    html += `<div class="toggle-row"><label><input type="checkbox" id="fnotice_note_toggle" ${fnoticeIncludeNote ? 'checked' : ''}> Include communication note (recommended this year)</label></div>`;
+  }
+
   cat.fields.forEach(f => {
     html += `<div class="field-label">${f.label}</div>`;
     if (f.type === 'pronoun') {
       html += pronounSelectHTML(cat.id);
     } else {
       html += `<input type="text" id="f_${cat.id}_${f.key}" placeholder="${f.placeholder || ''}">`;
+    }
+
+    if (cat.id === 'fnotice' && f.key === 'eoq') {
+      html += `<div class="chip-row" id="eoq_chips">` +
+        EOQ_DATES.map(dt => `<button type="button" class="chip${dt.value === fnoticeEoqVal ? ' active' : ''}" data-val="${dt.value}">${dt.label}</button>`).join('') +
+        `</div>`;
+    }
+
+    if (cat.id === 'fnotice' && f.key === 'reason') {
+      html += `<div class="chip-row" id="reason_chips">` +
+        FNOTICE_REASONS.map(r => `<button type="button" class="chip${fnoticeReasons.includes(r.value) ? ' active' : ''}" data-val="${r.value}">${r.label}</button>`).join('') +
+        `</div><div class="note">Choose up to 2 — the most impactful reasons.</div>`;
     }
   });
 
@@ -462,6 +546,41 @@ function renderForm(){
   }
 
   formFields.innerHTML = html;
+
+  if (cat.id === 'fnotice') {
+    document.getElementById('fnotice_note_toggle').addEventListener('change', (e) => {
+      fnoticeIncludeNote = e.target.checked;
+    });
+
+    const eoqInput = document.getElementById(`f_${cat.id}_eoq`);
+    if (fnoticeEoqVal) eoqInput.value = fnoticeEoqVal;
+    document.querySelectorAll('#eoq_chips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        fnoticeEoqVal = chip.dataset.val;
+        eoqInput.value = fnoticeEoqVal;
+        document.querySelectorAll('#eoq_chips .chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+
+    const reasonInput = document.getElementById(`f_${cat.id}_reason`);
+    if (fnoticeReasons.length) reasonInput.value = fnoticeReasons.join(' and ');
+    document.querySelectorAll('#reason_chips .chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const val = chip.dataset.val;
+        const idx = fnoticeReasons.indexOf(val);
+        if (idx > -1) {
+          fnoticeReasons.splice(idx, 1);
+          chip.classList.remove('active');
+        } else {
+          if (fnoticeReasons.length >= 2) return;
+          fnoticeReasons.push(val);
+          chip.classList.add('active');
+        }
+        reasonInput.value = fnoticeReasons.join(' and ');
+      });
+    });
+  }
 
   if (cat.repeatable) {
     const rowsWrap = document.getElementById(`rows_${cat.id}`);
