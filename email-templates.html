@@ -255,6 +255,14 @@
     border-color: var(--navy);
     color: white;
   }
+
+  nav.cats button.disabled {
+    color: var(--gray);
+    cursor: not-allowed;
+    background: var(--gray-light);
+  }
+  nav.cats button.disabled:hover { background: var(--gray-light); }
+  nav.cats button.disabled .sub { color: var(--gray); }
 </style>
 </head>
 <body>
@@ -398,7 +406,8 @@ const categories = [
         ? rows.map(r => `- ${fallback(r[0],"[Assignment]")}${r[1] ? " — due " + r[1] : ""}`).join("\n")
         : "- [Assignment 1]\n- [Assignment 2]";
       const count = rows.length || "[Number]";
-      return `${greeting(d)}I wanted to flag that ${d.name} currently ${d.p.has} ${count} missing assignment(s) in ${fallback(d.course,"[Course]")}:\n\n${list}\n\nGetting these turned in will help keep ${d.p.poss} grade on track. Please let me know if I can help in any way.\n\nSincerely,\n${d.teacher}`;
+      const noun = rows.length === 1 ? "assignment" : "assignments";
+      return `${greeting(d)}I wanted to flag that ${d.name} currently ${d.p.has} ${count} missing ${noun} in ${fallback(d.course,"[Course]")}:\n\n${list}\n\nGetting these turned in will help keep ${d.p.poss} grade on track. Please let me know if I can help in any way.\n\nSincerely,\n${d.teacher}`;
     }
   },
   {
@@ -422,7 +431,8 @@ const categories = [
   {
     id: "dresscode",
     label: "Dress Code Violation",
-    sub: "Friendly reminder",
+    sub: "Not in use",
+    disabled: true,
     desc: "A light, no-drama reminder — not a disciplinary notice.",
     fields: [
       { key: "name", label: "Student name", type: "text", placeholder: "e.g. Noah" },
@@ -487,9 +497,13 @@ function renderNav(){
   catNav.innerHTML = '';
   categories.forEach(cat => {
     const btn = document.createElement('button');
-    btn.className = cat.id === activeId ? 'active' : '';
+    let cls = cat.id === activeId ? 'active' : '';
+    if (cat.disabled) cls += ' disabled';
+    btn.className = cls.trim();
     btn.innerHTML = cat.label + '<span class="sub">' + cat.sub + '</span>';
-    btn.addEventListener('click', () => selectCategory(cat.id));
+    if (!cat.disabled) {
+      btn.addEventListener('click', () => selectCategory(cat.id));
+    }
     catNav.appendChild(btn);
   });
 }
