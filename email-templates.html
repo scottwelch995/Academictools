@@ -461,7 +461,7 @@ const categories = [
       }
       const pctText = d.pct ? d.pct.trim().replace("%","") + "%" : "[%]";
       const noteBlock = fnoticeIncludeNote ? `${FNOTICE_NOTE_TEXT}\n\n` : "";
-      return `Grade Update: ${fallback(d.course,"[Course]")}\n\n${noteBlock}${greeting(d)}As of today, ${d.name} ${d.p.is} receiving a grade of ${fallback(d.letter,"[Letter]")} (${pctText}) in ${fallback(d.course,"[Course]")}.\n\nThe grading period ends ${fallback(d.eoq,"[End of Quarter Date]")}.\n\nThis grade reflects ${mid(d.reason,"[reason]")}.\n\n${upcoming}If you'd like to talk about how to help ${d.p.obj} improve ${d.p.poss} grade before the end of the quarter, I'm happy to connect.\n\nSincerely,\n${d.teacher}`;
+      return `Grade Update: ${fallback(d.course,"[Course]")}\n\n${greeting(d)}${noteBlock}As of today, ${d.name} ${d.p.is} receiving a grade of ${fallback(d.letter,"[Letter]")} (${pctText}) in ${fallback(d.course,"[Course]")}.\n\nThe grading period ends ${fallback(d.eoq,"[End of Quarter Date]")}.\n\nThis grade reflects ${mid(d.reason,"[reason]")}.\n\n${upcoming}If you'd like to talk about how to help ${d.p.obj} improve ${d.p.poss} grade before the end of the quarter, I'm happy to connect.\n\nSincerely,\n${d.teacher}`;
     }
   }
 ];
